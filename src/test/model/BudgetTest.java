@@ -36,6 +36,15 @@ class BudgetTest {
     }
 
     @Test
+    public void getSavingsTest() {
+        testBudget.addCategory("C1");
+        testBudget.addIncome(700);
+        assertEquals(700, testBudget.getSavings());
+        testBudget.getCategories().get(0).setAmount(90);
+        assertEquals(610, testBudget.getSavings());
+    }
+
+    @Test
     public void addCategoryTest() {
         testBudget.addCategory("TestCategory1");
         assertEquals(1, testBudget.getCategories().size());
