@@ -53,15 +53,24 @@ public class BudgetApp {
                 System.out.println("Savings: " + currentBudget.getSavings());
                 break;
             case "a":
-                newCategory();
+                newCategory(0);
+                break;
+            case "r":
+                newCategory(1);
+                break;
         }
     }
 
-
-    private void newCategory() {
+    // nextAction 0 = new amount
+    // nextAction 1 = new range
+    private void newCategory(int nextAction) {
         System.out.println("Please enter a title for the new category");
         String answer = input.next();
-        currentBudget.addCategory(answer);
+        if (nextAction == 0) {
+            currentBudget.addAmount(answer);
+        } else {
+            currentBudget.addRange(answer);
+        }
     }
 
     // 0 = editCategory
@@ -73,7 +82,7 @@ public class BudgetApp {
         } else {
             Category subject;
             System.out.println("Enter category selection:");
-            List<String> names = namesList();
+            List<String> names = allNames();
             String answer = input.next().toLowerCase();
             if (names.contains(answer)) {
                 subject = currentBudget.getCategories().get(names.indexOf(answer));
@@ -82,7 +91,7 @@ public class BudgetApp {
                 } else if (nextAction == 1) {
                     nameCategory(subject);
                 } else {
-                    currentBudget.removeCategory(subject);
+                    removeCategory(subject);
                 }
             } else {
                 System.out.println("Answer not valid");
@@ -91,7 +100,20 @@ public class BudgetApp {
         }
     }
 
-    private List<String> namesList() {
+    private void removeCategory(Category category) {
+        currentBudget.removeCategory(category);
+        String categoryName = category.getTitle().toLowerCase();
+        if (rangeNames().contains(categoryName)) {
+            Range range = currentBudget.getRanges().get(rangeNames().indexOf(categoryName));
+            currentBudget.removeRange(range);
+        } else {
+            Amount amount = currentBudget.getAmounts().get(amountNames().indexOf(categoryName));
+            currentBudget.removeAmount(amount);
+        }
+    }
+
+    // condense name list methods
+    private List<String> allNames() {
         List<String> names = new ArrayList<>();
         for (Category c : currentBudget.getCategories()) {
             names.add(c.getTitle().toLowerCase());
@@ -99,20 +121,73 @@ public class BudgetApp {
         return names;
     }
 
+    private List<String> rangeNames() {
+        List<String> names = new ArrayList<>();
+        for (Range r : currentBudget.getRanges()) {
+            names.add(r.getTitle().toLowerCase());
+        }
+        return names;
+    }
+
+    private List<String> amountNames() {
+        List<String> names = new ArrayList<>();
+        for (Amount a : currentBudget.getAmounts()) {
+            names.add(a.getTitle().toLowerCase());
+        }
+        return names;
+    }
+
     private void nameCategory(Category category) {
         System.out.println("Enter new name for " + category.getTitle());
-        String answer = input.next();
-        category.setTitle(answer);
+        String answer = input.next().toLowerCase();
+        if (allNames().contains(answer)) {
+            System.out.println("A category already has that name.");
+        } else {
+            category.setTitle(answer);
+        }
     }
 
     private void editCategory(Category category) {
-        System.out.println("Please input new value for " + category.getTitle());
+        String categoryName = category.getTitle().toLowerCase();
+        if (rangeNames().contains(categoryName)) {
+            Range range = currentBudget.getRanges().get(rangeNames().indexOf(categoryName));
+            editRange(range);
+        } else {
+            Amount amount = currentBudget.getAmounts().get(amountNames().indexOf(categoryName));
+            editAmount(amount);
+        }
+    }
+
+    private void editRange(Range range) {
+        System.out.println("Enter a lower bound for " + range.getTitle());
         int answer = input.nextInt();
         if (answer >= 0) {
-            category.setAmount(answer);
+            range.setLow(answer);
+            boolean done = false;
+            while (!done) {
+                System.out.println("Enter an upper bound for " + range.getTitle());
+                int answer2 = input.nextInt();
+                if (answer2 >= 0) {
+                    range.setHigh(answer2);
+                    done = true;
+                } else {
+                    System.out.println("Answer not valid.");
+                }
+            }
         } else {
             System.out.println("Answer not valid.");
-            editCategory(category);
+            editRange(range);
+        }
+    }
+
+    private void editAmount(Amount amount) {
+        System.out.println("Please input new value for " + amount.getTitle());
+        int answer = input.nextInt();
+        if (answer >= 0) {
+            amount.setAmount(answer);
+        } else {
+            System.out.println("Answer not valid.");
+            editAmount(amount);
         }
     }
 
@@ -134,7 +209,8 @@ public class BudgetApp {
         System.out.println("i: change income");
         System.out.println("c: edit a spending category amount");
         System.out.println("n: edit a spending category name");
-        System.out.println("a: add a new spending category");
+        System.out.println("r: add a new spending category (range)");
+        System.out.println("a: add a new spending category (definite amount)");
         System.out.println("r: remove a spending category");
         System.out.println("s: view savings");
         System.out.println("q: quit");
@@ -146,9 +222,13 @@ public class BudgetApp {
         if (currentBudget.getCategories().isEmpty()) {
             System.out.println("No categories created yet");
         } else {
-            System.out.println("Spending categories: ");
-            for (Category c : currentBudget.getCategories()) {
-                System.out.println(c.getTitle() + ": " + c.getAmount());
+            System.out.println("Ranges: ");
+            for (Range r : currentBudget.getRanges()) {
+                System.out.println(r.getTitle() + ": " + r.getRange());
+            }
+            System.out.println("Definite amounts: ");
+            for (Amount a : currentBudget.getAmounts()) {
+                System.out.println(a.getTitle() + ": " + a.getAmount());
             }
         }
     }

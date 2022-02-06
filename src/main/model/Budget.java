@@ -7,26 +7,41 @@ public class Budget {
 
     private int income;
     List<Category> categories;
+    List<Range> ranges;
+    List<Amount> amounts;
 
     // EFFECTS: creates a new Budget with no categories and income set at 0
     public Budget() {
         income = 0;
         categories = new ArrayList<>();
+        ranges = new ArrayList<>();
+        amounts = new ArrayList<>();
     }
 
     public void addIncome(int amount) {
         income += amount;
     }
 
-    public void addCategory(String title) {
-        Category newCategory = new Category(title, 0);
-        categories.add(newCategory);
+    public void addRange(String title) {
+        Range newRange = new Range(title, 0, 1);
+        ranges.add(newRange);
+        categories.add(newRange);
     }
+
+    public void addAmount(String title) {
+        Amount newAmount = new Amount(title, 0);
+        amounts.add(newAmount);
+        categories.add(newAmount);
+    }
+
 
     public int getTotalCosts() {
         int total = 0;
-        for (Category c : categories) {
-            total += c.getAmount();
+        for (Range r : ranges) {
+            total += r.getHigh();
+        }
+        for (Amount a : amounts) {
+            total += a.getAmount();
         }
         return total;
     }
@@ -35,6 +50,14 @@ public class Budget {
     // REQUIRES: category in categories list
     public void removeCategory(Category category) {
         categories.remove(category);
+    }
+
+    public void removeRange(Range range) {
+        ranges.remove(range);
+    }
+
+    public void removeAmount(Amount amount) {
+        amounts.remove(amount);
     }
 
     public int getSavings() {
@@ -47,5 +70,13 @@ public class Budget {
 
     public int getIncome() {
         return income;
+    }
+
+    public List<Range> getRanges() {
+        return ranges;
+    }
+
+    public List<Amount> getAmounts() {
+        return amounts;
     }
 }
