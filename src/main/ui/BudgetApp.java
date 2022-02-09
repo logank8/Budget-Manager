@@ -6,17 +6,19 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
 
+// Budget application
 public class BudgetApp {
 
     private Budget currentBudget;
     private Scanner input;
 
+    // EFFECTS: runs budget app
     public BudgetApp() {
         runBudget();
     }
 
     // MODIFIES: this
-    // processes user input
+    // EFFECTS: processes user input
     private void runBudget() {
         boolean keepGoing = true;
         String command;
@@ -61,6 +63,7 @@ public class BudgetApp {
         }
     }
 
+    // EFFECTS: processes user input for title for new category
     // nextAction 0 = new amount
     // nextAction 1 = new range
     private void newCategory(int nextAction) {
@@ -73,9 +76,10 @@ public class BudgetApp {
         }
     }
 
-    // 0 = editCategory
-    // 1 = nameCategory
-    // 2 = removeCategory
+    // EFFECTS: processes user input for category selection; then:
+    // nextAction 0 = editCategory
+    // nextAction 1 = nameCategory
+    // nextAction 2 = removeCategory
     private void chooseCategory(int nextAction) {
         if (currentBudget.getCategories().isEmpty()) {
             System.out.println("No categories to choose from.");
@@ -100,6 +104,8 @@ public class BudgetApp {
         }
     }
 
+    // MODIFIES: this
+    // EFFECTS: removes category from currentBUdget categories list and ranges/amounts list depending on subclass
     private void removeCategory(Category category) {
         currentBudget.removeCategory(category);
         String categoryName = category.getTitle().toLowerCase();
@@ -112,7 +118,7 @@ public class BudgetApp {
         }
     }
 
-    // condense name list methods
+    // EFFECTS: creates corresponding list of titles of every category
     private List<String> allNames() {
         List<String> names = new ArrayList<>();
         for (Category c : currentBudget.getCategories()) {
@@ -121,6 +127,7 @@ public class BudgetApp {
         return names;
     }
 
+    // EFFECTS: creates corresponding list of titles of every range
     private List<String> rangeNames() {
         List<String> names = new ArrayList<>();
         for (Range r : currentBudget.getRanges()) {
@@ -129,6 +136,7 @@ public class BudgetApp {
         return names;
     }
 
+    // EFFECTS: creates corresponding list of titles of every amount
     private List<String> amountNames() {
         List<String> names = new ArrayList<>();
         for (Amount a : currentBudget.getAmounts()) {
@@ -137,6 +145,9 @@ public class BudgetApp {
         return names;
     }
 
+    // REQUIRES: category object not null
+    // MODIFIES: category
+    // EFFECTS: processes user input to change title of category
     private void nameCategory(Category category) {
         System.out.println("Enter new name for " + category.getTitle());
         String answer = input.next().toLowerCase();
@@ -147,6 +158,8 @@ public class BudgetApp {
         }
     }
 
+    // REQUIRES: category object not null
+    // EFFECTS: finds if category is a range or amount, then call editRange or editAmount respectively
     private void editCategory(Category category) {
         String categoryName = category.getTitle().toLowerCase();
         if (rangeNames().contains(categoryName)) {
@@ -158,6 +171,9 @@ public class BudgetApp {
         }
     }
 
+    // REQUIRES: range object not null
+    // MODIFIES: range
+    // EFFECTS: processes user input for new lower & upper bounds for range
     private void editRange(Range range) {
         System.out.println("Enter a lower bound for " + range.getTitle());
         int answer = input.nextInt();
@@ -180,6 +196,9 @@ public class BudgetApp {
         }
     }
 
+    // REQUIRES: amount object not null
+    // MODIFIES: amount
+    // EFFECTS: processes user input for new value for amount
     private void editAmount(Amount amount) {
         System.out.println("Please input new value for " + amount.getTitle());
         int answer = input.nextInt();
@@ -191,6 +210,8 @@ public class BudgetApp {
         }
     }
 
+    // MODIFIES: income
+    // EFFECTS: adds user int input to income & outputs new income value
     private void changeIncome() {
         System.out.println("Please enter a value to add to income");
         int answer = input.nextInt();
@@ -203,6 +224,7 @@ public class BudgetApp {
         }
     }
 
+    // EFFECTS: outputs controls
     private void displayMenu() {
         showInfo();
         System.out.println("Controls: ");
@@ -216,6 +238,7 @@ public class BudgetApp {
         System.out.println("q: quit");
     }
 
+    // EFFECTS: outputs budget income, ranges, and amounts
     private void showInfo() {
         System.out.println("Current Budget: ");
         System.out.println("Income: " + currentBudget.getIncome());
@@ -233,6 +256,7 @@ public class BudgetApp {
         }
     }
 
+    // EFFECTS: initializes budget and scanner
     private void init() {
         currentBudget = new Budget();
         input = new Scanner(System.in);
