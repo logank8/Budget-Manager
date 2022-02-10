@@ -1,7 +1,7 @@
 package model;
 
 // Represents a category of spending within the budget with a title
-public class Category {
+public abstract class Category {
 
     private String title;
 

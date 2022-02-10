@@ -6,4 +6,5 @@ anyone with a need to manage their expenses. I created this because I love budge
 This application can:
 - add any amount of spending categories
 - calculate total savings (income - all costs)
+  - when savings are calculated, the highest bound of each range is taken.
 - list spending categories as definite amounts *or* as ranges.

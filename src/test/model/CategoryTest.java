@@ -12,7 +12,7 @@ public class CategoryTest {
 
     @BeforeEach
     public void runBefore() {
-        testCategory = new Category("Title");
+        testCategory = new Amount("Title", 0);
     }
 
     @Test
