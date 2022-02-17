@@ -60,6 +60,8 @@ public class BudgetApp {
             case "r":
                 newCategory(1);
                 break;
+            case "e":
+                chooseCategory(2);
         }
     }
 
@@ -105,7 +107,7 @@ public class BudgetApp {
     }
 
     // MODIFIES: this
-    // EFFECTS: removes category from currentBUdget categories list and ranges/amounts list depending on subclass
+    // EFFECTS: removes category from currentBudget categories list and ranges/amounts list depending on subclass
     private void removeCategory(Category category) {
         currentBudget.removeCategory(category);
         String categoryName = category.getTitle().toLowerCase();
@@ -233,7 +235,7 @@ public class BudgetApp {
         System.out.println("n: edit a spending category name");
         System.out.println("r: add a new spending category (range)");
         System.out.println("a: add a new spending category (definite amount)");
-        System.out.println("r: remove a spending category");
+        System.out.println("e: remove a spending category");
         System.out.println("s: view savings");
         System.out.println("q: quit");
     }
