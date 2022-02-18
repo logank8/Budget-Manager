@@ -32,14 +32,9 @@ public class Budget {
 
     // MODIFIES: this
     // EFFECTS: creates new range with given title with bounds 0 -1 ; adds range to ranges and categories lists
-    public void addRange(String title, int lower, int upper) throws UnbalancedRangeException {
-        if (lower >= upper) {
-            throw new UnbalancedRangeException();
-        } else {
-            Range newRange = new Range(title, lower, upper);
-            ranges.add(newRange);
-            categories.add(newRange);
-        }
+    public void addRange(Range range) {
+        ranges.add(range);
+        categories.add(range);
     }
 
     // MODIFIES: this

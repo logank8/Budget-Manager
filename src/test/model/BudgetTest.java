@@ -32,19 +32,8 @@ class BudgetTest {
 
     @Test
     public void addRangeTest() {
-        try {
-            testBudget.addRange("R1", 0, 1);
-        } catch (UnbalancedRangeException e) {
-            fail();
-        }
-
-        try {
-            testBudget.addRange("R2", 1, 0);
-            fail();
-        } catch (UnbalancedRangeException e) {
-            assertEquals(1, testBudget.categories.size());
-            assertEquals(1, testBudget.ranges.size());
-        }
+        Range range1 = new Range("R1", 0, 1);
+        testBudget.addRange(range1);
         assertEquals("R1", testBudget.ranges.get(0).getTitle());
         assertEquals("R1", testBudget.categories.get(0).getTitle());
     }
