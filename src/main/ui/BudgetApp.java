@@ -1,5 +1,6 @@
 package ui;
 
+import exceptions.UnbalancedRangeException;
 import model.*;
 
 import java.util.ArrayList;
@@ -72,10 +73,29 @@ public class BudgetApp {
         System.out.println("Please enter a title for the new category");
         String answer = input.next();
         if (nextAction == 0) {
-            currentBudget.addAmount(answer);
+            addAmount(answer);
         } else {
-            currentBudget.addRange(answer);
+            addRange(answer);
         }
+    }
+
+    private void addRange(String name) {
+        System.out.println("Enter a lower bound for " + name);
+        int answer = input.nextInt();
+        int lower = answer;
+        System.out.println("Enter an upper bound for " + name);
+        int upper = input.nextInt();
+        try {
+            currentBudget.addRange(name, lower, upper);
+        } catch (UnbalancedRangeException e) {
+            System.out.println("Invalid answer - your upper bound should be higher than your lower");
+        }
+    }
+
+    private void addAmount(String name) {
+        System.out.println("Enter an amount for " + name);
+        int answer = input.nextInt();
+        currentBudget.addAmount(name, answer);
     }
 
     // EFFECTS: processes user input for category selection; then:

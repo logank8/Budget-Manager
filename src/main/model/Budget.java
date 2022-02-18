@@ -1,5 +1,7 @@
 package model;
 
+import exceptions.UnbalancedRangeException;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -11,6 +13,7 @@ public class Budget {
     List<Category> categories;
     List<Range> ranges;
     List<Amount> amounts;
+
 
     // EFFECTS: creates a new Budget with no categories and income set at 0
     public Budget() {
@@ -29,16 +32,20 @@ public class Budget {
 
     // MODIFIES: this
     // EFFECTS: creates new range with given title with bounds 0 -1 ; adds range to ranges and categories lists
-    public void addRange(String title) {
-        Range newRange = new Range(title, 0, 1);
-        ranges.add(newRange);
-        categories.add(newRange);
+    public void addRange(String title, int lower, int upper) throws UnbalancedRangeException {
+        if (lower >= upper) {
+            throw new UnbalancedRangeException();
+        } else {
+            Range newRange = new Range(title, lower, upper);
+            ranges.add(newRange);
+            categories.add(newRange);
+        }
     }
 
     // MODIFIES: this
     // EFFECTS: creates new amount with given title and amount 0, adds to amounts and categories lists
-    public void addAmount(String title) {
-        Amount newAmount = new Amount(title, 0);
+    public void addAmount(String title, int value) {
+        Amount newAmount = new Amount(title, value);
         amounts.add(newAmount);
         categories.add(newAmount);
     }

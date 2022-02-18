@@ -1,5 +1,6 @@
 package model;
 
+import exceptions.UnbalancedRangeException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -31,16 +32,26 @@ class BudgetTest {
 
     @Test
     public void addRangeTest() {
-        testBudget.addRange("R1");
-        assertEquals(1, testBudget.ranges.size());
-        assertEquals(1, testBudget.categories.size());
+        try {
+            testBudget.addRange("R1", 0, 1);
+        } catch (UnbalancedRangeException e) {
+            fail();
+        }
+
+        try {
+            testBudget.addRange("R2", 1, 0);
+            fail();
+        } catch (UnbalancedRangeException e) {
+            assertEquals(1, testBudget.categories.size());
+            assertEquals(1, testBudget.ranges.size());
+        }
         assertEquals("R1", testBudget.ranges.get(0).getTitle());
         assertEquals("R1", testBudget.categories.get(0).getTitle());
     }
 
     @Test
     public void addAmountTest() {
-        testBudget.addAmount("A1");
+        testBudget.addAmount("A1", 0);
         assertEquals(1, testBudget.amounts.size());
         assertEquals(1, testBudget.categories.size());
         assertEquals("A1", testBudget.amounts.get(0).getTitle());
@@ -49,19 +60,17 @@ class BudgetTest {
 
     @Test
     public void getTotalCostsTest() {
-        testBudget.addAmount("A1");
-        testBudget.addAmount("A2");
-        testBudget.amounts.get(0).setAmount(100);
+        testBudget.addAmount("A1", 100);
         assertEquals(100, testBudget.getTotalCosts());
-        testBudget.amounts.get(1).setAmount(90);
+        testBudget.addAmount("A2", 90);
         assertEquals(190, testBudget.getTotalCosts());
     }
 
 
     @Test
     public void removeCategoryTest() {
-        testBudget.addRange("C1");
-        testBudget.addAmount("C2");
+        testBudget.addAmount("C1", 0);
+        testBudget.addAmount("C2", 0);
         assertEquals(2, testBudget.categories.size());
         testBudget.removeCategory(testBudget.getCategories().get(0));
         assertEquals(1, testBudget.getCategories().size());
@@ -70,8 +79,9 @@ class BudgetTest {
 
     @Test
     public void removeRangeTest() {
-        testBudget.addRange("R1");
+        testBudget.ranges.add(new Range("R1", 0, 1));
         Range testRange = testBudget.ranges.get(0);
+        testBudget.categories.add(testRange);
         assertEquals(1, testBudget.categories.size());
         assertEquals(1, testBudget.ranges.size());
         testBudget.removeRange(testRange);
@@ -81,7 +91,7 @@ class BudgetTest {
 
     @Test
     public void removeAmountTest() {
-        testBudget.addAmount("A1");
+        testBudget.addAmount("A1", 0);
         Amount testAmount = testBudget.amounts.get(0);
         assertEquals(1, testBudget.categories.size());
         assertEquals(1, testBudget.amounts.size());
@@ -92,13 +102,13 @@ class BudgetTest {
 
 
     @Test
-    public void getSavingsTest() {
-        testBudget.addAmount("A1");
+    public void getSavingsTest(){
+        testBudget.addAmount("A1", 0);
         testBudget.addIncome(700);
         assertEquals(700, testBudget.getSavings());
         testBudget.amounts.get(0).setAmount(90);
         assertEquals(610, testBudget.getSavings());
-        testBudget.addRange("R1");
+        testBudget.ranges.add(new Range("R1", 0, 1));
         assertEquals(609, testBudget.getSavings());
     }
 }
