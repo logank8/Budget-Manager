@@ -80,12 +80,17 @@ public class BudgetApp {
     }
 
     // REQUIRES: String name not ""
+    // MODIFIES: this
+    // EFFECTS: adds range and inputs range to editRange
     private void addRange(String name) {
         Range range = new Range(name, 0, 1);
         currentBudget.addRange(range);
         editRange(range);
     }
 
+    // REQUIRES: String name not ""
+    // MODIFIES: this
+    // EFFECTS: adds amount with given value
     private void addAmount(String name) {
         System.out.println("Enter an amount for " + name);
         int answer = input.nextInt();
@@ -120,6 +125,7 @@ public class BudgetApp {
         }
     }
 
+    // REQUIRES: object category not null
     // MODIFIES: this
     // EFFECTS: removes category from currentBudget categories list and ranges/amounts list depending on subclass
     private void removeCategory(Category category) {
