@@ -1,19 +1,26 @@
 package ui;
 
 import model.*;
+import persistence.JsonReader;
+import persistence.JsonWriter;
 
+import java.io.FileNotFoundException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
 
 // Budget application
 public class BudgetApp {
-
+    public static final String JSON_STORE = "./data/workroom.json";
     private Budget currentBudget;
     private Scanner input;
+    private JsonWriter jsonWriter;
+    private JsonReader jsonReader;
 
     // EFFECTS: runs budget app
-    public BudgetApp() {
+    public BudgetApp() throws FileNotFoundException {
+        jsonWriter = new JsonWriter(JSON_STORE);
+        jsonReader = new JsonReader(JSON_STORE);
         runBudget();
     }
 

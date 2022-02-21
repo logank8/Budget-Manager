@@ -1,7 +1,10 @@
 package model;
 
+import org.json.JSONObject;
+import persistence.Writable;
+
 // Represents a category of spending within the budget with a title
-public abstract class Category {
+public abstract class Category implements Writable {
 
     private String title;
 
@@ -21,4 +24,10 @@ public abstract class Category {
         return title;
     }
 
+    @Override
+    public JSONObject toJson() {
+        JSONObject json = new JSONObject();
+        json.put("title", title);
+        return json;
+    }
 }

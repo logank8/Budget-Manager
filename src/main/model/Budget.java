@@ -1,11 +1,16 @@
 package model;
 
+import org.json.JSONArray;
+import org.json.JSONObject;
+import persistence.Writable;
+
 import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
 
 // Represents a Budget with a given amount of categories (divided into corresponding lists of ranges and amounts),
 // and an income
-public class Budget {
+public class Budget implements Writable {
 
     private int income;
     List<Category> categories;
@@ -101,5 +106,45 @@ public class Budget {
     // EFFECTS: returns amounts list
     public List<Amount> getAmounts() {
         return amounts;
+    }
+
+    @Override
+    public JSONObject toJson() {
+        JSONObject json = new JSONObject();
+        json.put("income", income);
+        json.put("ranges", rangesToJson());
+        json.put("amounts", amountsToJson());
+        return json;
+    }
+
+    // EFFECTS: returns things in this workroom as a JSON array
+    private JSONArray categoriesToJson() {
+        JSONArray jsonArray = new JSONArray();
+
+        for (Category c : categories) {
+            jsonArray.put(c.toJson());
+        }
+
+        return jsonArray;
+    }
+
+    private JSONArray rangesToJson() {
+        JSONArray jsonArray = new JSONArray();
+
+        for (Range r : ranges) {
+            jsonArray.put(r.toJson());
+        }
+
+        return jsonArray;
+    }
+
+    private JSONArray amountsToJson() {
+        JSONArray jsonArray = new JSONArray();
+
+        for (Amount a : amounts) {
+            jsonArray.put(a.toJson());
+        }
+
+        return jsonArray;
     }
 }

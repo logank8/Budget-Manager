@@ -1,9 +1,11 @@
 package model;
 
 
-// Represents a category with a range rather than a definite amount
-public class Range extends Category {
+import org.json.JSONObject;
+import persistence.Writable;
 
+// Represents a category with a range rather than a definite amount
+public class Range extends Category implements Writable {
     private int low;
     private int high;
 
@@ -47,5 +49,11 @@ public class Range extends Category {
         return high;
     }
 
-
+    @Override
+    public JSONObject toJson() {
+        JSONObject json = new JSONObject();
+        json.put("low", low);
+        json.put("high", high);
+        return json;
+    }
 }

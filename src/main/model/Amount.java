@@ -1,5 +1,7 @@
 package model;
 
+import org.json.JSONObject;
+
 // Represents a category with a definite amount
 public class Amount extends Category {
 
@@ -21,5 +23,12 @@ public class Amount extends Category {
     // EFFECTS: returns amount
     public int getAmount() {
         return amount;
+    }
+
+    @Override
+    public JSONObject toJson() {
+        JSONObject json = new JSONObject();
+        json.put("amount", amount);
+        return json;
     }
 }
