@@ -1,6 +1,8 @@
 package persistence;
 
+import model.Amount;
 import model.Budget;
+import model.Range;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
@@ -18,7 +20,7 @@ public class JsonReader {
         this.source = source;
     }
 
-    // EFFECTS: reads workroom from file and returns it;
+    // EFFECTS: reads budget from file and returns it;
     //  throws IOException if an error occurs reading data from file
     public Budget read() throws IOException {
         String jsonData = readFile(source);
@@ -41,6 +43,7 @@ public class JsonReader {
     private Budget parseBudget(JSONObject jsonObject) {
         Budget b = new Budget();
         int income = jsonObject.getInt("income");
+        b.addIncome(income);
         addRanges(b, jsonObject);
         addAmounts(b, jsonObject);
         return b;
@@ -51,19 +54,34 @@ public class JsonReader {
     private void addRanges(Budget b, JSONObject jsonObject) {
         JSONArray jsonArray = jsonObject.getJSONArray("ranges");
         for (Object json : jsonArray) {
-            JSONObject nextThingy = (JSONObject) json;
-            addRange(b, jsonObject);
+            JSONObject nextRange = (JSONObject) json;
+            addRange(b, nextRange);
         }
     }
 
     // MODIFIES: b
     // EFFECTS: parses range from JSON object and adds to budget
     private void addRange(Budget b, JSONObject jsonObject) {
+        String title = jsonObject.getString("title");
         int low = jsonObject.getInt("low");
         int high = jsonObject.getInt("high");
+        Range range = new Range(title, low, high);
+        b.addRange(range);
     }
 
     private void addAmounts(Budget b, JSONObject jsonObject) {
-
+        JSONArray jsonArray = jsonObject.getJSONArray("amounts");
+        for (Object json : jsonArray) {
+            JSONObject nextAmount = (JSONObject) json;
+            addAmount(b, nextAmount);
+        }
     }
+
+    private void addAmount(Budget b, JSONObject jsonObject) {
+        String title = jsonObject.getString("title");
+        int amount = jsonObject.getInt("amount");
+        b.addAmount(title, amount);
+    }
+
+
 }

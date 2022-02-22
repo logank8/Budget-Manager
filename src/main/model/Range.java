@@ -52,6 +52,7 @@ public class Range extends Category implements Writable {
     @Override
     public JSONObject toJson() {
         JSONObject json = new JSONObject();
+        json.put("title", getTitle());
         json.put("low", low);
         json.put("high", high);
         return json;

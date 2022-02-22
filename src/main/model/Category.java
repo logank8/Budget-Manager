@@ -23,11 +23,4 @@ public abstract class Category implements Writable {
     public String getTitle() {
         return title;
     }
-
-    @Override
-    public JSONObject toJson() {
-        JSONObject json = new JSONObject();
-        json.put("title", title);
-        return json;
-    }
 }

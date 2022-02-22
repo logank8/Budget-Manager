@@ -40,6 +40,7 @@ public class Budget implements Writable {
         categories.add(range);
     }
 
+    // !!! FIX
     // MODIFIES: this
     // EFFECTS: creates new amount with given title and amount 0, adds to amounts and categories lists
     public void addAmount(String title, int value) {
@@ -115,17 +116,6 @@ public class Budget implements Writable {
         json.put("ranges", rangesToJson());
         json.put("amounts", amountsToJson());
         return json;
-    }
-
-    // EFFECTS: returns things in this workroom as a JSON array
-    private JSONArray categoriesToJson() {
-        JSONArray jsonArray = new JSONArray();
-
-        for (Category c : categories) {
-            jsonArray.put(c.toJson());
-        }
-
-        return jsonArray;
     }
 
     private JSONArray rangesToJson() {

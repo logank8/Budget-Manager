@@ -28,6 +28,7 @@ public class Amount extends Category {
     @Override
     public JSONObject toJson() {
         JSONObject json = new JSONObject();
+        json.put("title", getTitle());
         json.put("amount", amount);
         return json;
     }

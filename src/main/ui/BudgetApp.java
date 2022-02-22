@@ -5,6 +5,7 @@ import persistence.JsonReader;
 import persistence.JsonWriter;
 
 import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
@@ -48,28 +49,26 @@ public class BudgetApp {
     // MODIFIES: this
     // EFFECTS: processes user command
     private void processCommand(String command) {
-        switch (command) {
-            case "i":
-                changeIncome();
-                break;
-            case "c":
-                chooseCategory(0);
-                break;
-            case "n":
-                chooseCategory(1);
-                break;
-            case "s":
-                System.out.println("Savings: " + currentBudget.getSavings());
-                break;
-            case "a":
-                newCategory(0);
-                break;
-            case "r":
-                newCategory(1);
-                break;
-            case "e":
-                chooseCategory(2);
-                break;
+        if ("i".equals(command)) {
+            changeIncome();
+        } else if ("c".equals(command)) {
+            chooseCategory(0);
+        } else if ("n".equals(command)) {
+            chooseCategory(1);
+        } else if ("s".equals(command)) {
+            System.out.println("Savings: " + currentBudget.getSavings());
+        } else if ("a".equals(command)) {
+            newCategory(0);
+        } else if ("r".equals(command)) {
+            newCategory(1);
+        } else if ("e".equals(command)) {
+            chooseCategory(2);
+        } else if ("f".equals(command)) {
+            saveBudget();
+        } else if ("l".equals(command)) {
+            loadBudget();
+        } else {
+            System.out.println("Selection not valid...");
         }
     }
 
@@ -253,17 +252,39 @@ public class BudgetApp {
         }
     }
 
+    private void saveBudget() {
+        try {
+            jsonWriter.open();
+            jsonWriter.write(currentBudget);
+            jsonWriter.close();
+            System.out.println("Saved current budget to " + JSON_STORE);
+        } catch (FileNotFoundException e) {
+            System.out.println("Unable to write to file " + JSON_STORE);
+        }
+    }
+
+    private void loadBudget() {
+        try {
+            currentBudget = jsonReader.read();
+            System.out.println("Loaded current budget from " + JSON_STORE);
+        } catch (IOException e) {
+            System.out.println("Unable to read from file " + JSON_STORE);
+        }
+    }
+
     // EFFECTS: outputs controls
     private void displayMenu() {
         showInfo();
         System.out.println("Controls: ");
-        System.out.println("i: change income");
-        System.out.println("c: edit a spending category amount");
+        System.out.println("i: edit income");
+        System.out.println("c: edit a spending category amount"); // condense this
         System.out.println("n: edit a spending category name");
-        System.out.println("r: add a new spending category (range)");
+        System.out.println("r: add a new spending category (range)"); // condense
         System.out.println("a: add a new spending category (definite amount)");
         System.out.println("e: remove a spending category");
         System.out.println("s: view savings");
+        System.out.println("f: save budget to file");
+        System.out.println("l: load budget from file");
         System.out.println("q: quit");
     }
 
