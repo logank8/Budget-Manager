@@ -5,7 +5,6 @@ import org.json.JSONObject;
 import persistence.Writable;
 
 import java.util.ArrayList;
-import java.util.LinkedList;
 import java.util.List;
 
 // Represents a Budget with a given amount of categories (divided into corresponding lists of ranges and amounts),

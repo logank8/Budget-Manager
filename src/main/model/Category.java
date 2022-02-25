@@ -1,6 +1,5 @@
 package model;
 
-import org.json.JSONObject;
 import persistence.Writable;
 
 // Represents a category of spending within the budget with a title

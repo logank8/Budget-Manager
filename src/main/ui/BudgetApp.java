@@ -12,7 +12,7 @@ import java.util.Scanner;
 
 // Budget application
 public class BudgetApp {
-    public static final String JSON_STORE = "./data/workroom.json";
+    public static final String JSON_STORE = "./data/budget.json";
     private Budget currentBudget;
     private Scanner input;
     private JsonWriter jsonWriter;

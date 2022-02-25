@@ -1,0 +1,19 @@
+{
+  "income": 7000,
+  "ranges": [
+    {
+      "high": 80,
+      "low": 60,
+      "title": "testrange"
+    },
+    {
+      "high": 800,
+      "low": 600,
+      "title": "anothertestrange"
+    }
+  ],
+  "amounts": [{
+    "amount": 40,
+    "title": "anothertestamount"
+  }]
+}
