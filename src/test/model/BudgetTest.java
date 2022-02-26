@@ -9,10 +9,14 @@ import static org.junit.jupiter.api.Assertions.*;
 class BudgetTest {
 
     private Budget testBudget;
+    private Amount A1;
+    private Category C1;
 
     @BeforeEach
     public void runBefore() {
         testBudget = new Budget();
+        A1 = new Amount("A1", 0);
+        C1 = new Amount("C1", 0);
     }
 
     @Test
@@ -39,7 +43,7 @@ class BudgetTest {
 
     @Test
     public void addAmountTest() {
-        testBudget.addAmount("A1", 0);
+        testBudget.addAmount(A1);
         assertEquals(1, testBudget.amounts.size());
         assertEquals(1, testBudget.categories.size());
         assertEquals("A1", testBudget.amounts.get(0).getTitle());
@@ -48,17 +52,17 @@ class BudgetTest {
 
     @Test
     public void getTotalCostsTest() {
-        testBudget.addAmount("A1", 100);
+        testBudget.addAmount(new Amount("A1", 100));
         assertEquals(100, testBudget.getTotalCosts());
-        testBudget.addAmount("A2", 90);
+        testBudget.addAmount(new Amount("A2", 90));
         assertEquals(190, testBudget.getTotalCosts());
     }
 
 
     @Test
     public void removeCategoryTest() {
-        testBudget.addAmount("C1", 0);
-        testBudget.addAmount("C2", 0);
+        testBudget.addAmount(new Amount("C1", 0));
+        testBudget.addAmount(new Amount("C2", 0));
         assertEquals(2, testBudget.categories.size());
         testBudget.removeCategory(testBudget.getCategories().get(0));
         assertEquals(1, testBudget.getCategories().size());
@@ -79,19 +83,18 @@ class BudgetTest {
 
     @Test
     public void removeAmountTest() {
-        testBudget.addAmount("A1", 0);
-        Amount testAmount = testBudget.amounts.get(0);
+        testBudget.addAmount(A1);
         assertEquals(1, testBudget.categories.size());
         assertEquals(1, testBudget.amounts.size());
-        testBudget.removeAmount(testAmount);
+        testBudget.removeAmount(A1);
         assertEquals(0, testBudget.amounts.size());
-        assertEquals(testAmount, testBudget.categories.get(0));
+        assertEquals(A1, testBudget.categories.get(0));
     }
 
 
     @Test
     public void getSavingsTest(){
-        testBudget.addAmount("A1", 0);
+        testBudget.addAmount(A1);
         testBudget.addIncome(700);
         assertEquals(700, testBudget.getSavings());
         testBudget.amounts.get(0).setAmount(90);

@@ -42,8 +42,7 @@ public class Budget implements Writable {
     // !!! FIX
     // MODIFIES: this
     // EFFECTS: creates new amount with given title and amount 0, adds to amounts and categories lists
-    public void addAmount(String title, int value) {
-        Amount newAmount = new Amount(title, value);
+    public void addAmount(Amount newAmount) {
         amounts.add(newAmount);
         categories.add(newAmount);
     }

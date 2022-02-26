@@ -13,7 +13,7 @@ import java.nio.file.Paths;
 import java.util.stream.Stream;
 
 public class JsonReader {
-    private String source;
+    private final String source;
 
     // EFFECTS: constructs reader to read from source file
     public JsonReader(String source) {
@@ -33,7 +33,7 @@ public class JsonReader {
         StringBuilder contentBuilder = new StringBuilder();
 
         try (Stream<String> stream = Files.lines(Paths.get(source), StandardCharsets.UTF_8)) {
-            stream.forEach(s -> contentBuilder.append(s));
+            stream.forEach(contentBuilder::append);
         }
 
         return contentBuilder.toString();
@@ -80,7 +80,8 @@ public class JsonReader {
     private void addAmount(Budget b, JSONObject jsonObject) {
         String title = jsonObject.getString("title");
         int amount = jsonObject.getInt("amount");
-        b.addAmount(title, amount);
+        Amount a = new Amount(title, amount);
+        b.addAmount(a);
     }
 
 

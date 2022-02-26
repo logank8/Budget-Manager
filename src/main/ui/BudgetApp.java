@@ -6,6 +6,7 @@ import persistence.JsonWriter;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.sql.SQLOutput;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
@@ -52,15 +53,13 @@ public class BudgetApp {
     private void processCommand(String command) {
         if ("i".equals(command)) { // edit income
             changeIncome();
-        } else if ("x".equals(command)) { // edit category
+        } else if ("e".equals(command)) { // edit category
             chooseCategory(0);
         } else if ("s".equals(command)) { // show savings
             System.out.println("Savings: " + currentBudget.getSavings());
-        } else if ("a".equals(command)) { // add amount
-            newCategory(0);
-        } else if ("r".equals(command)) { // add range
-            newCategory(1);
-        } else if ("e".equals(command)) { // remove category
+        } else if ("a".equals(command)) { // add new category
+            newCategory();
+        } else if ("r".equals(command)) { // remove category
             chooseCategory(1);
         } else if ("f".equals(command)) { // save
             saveBudget();
@@ -111,33 +110,25 @@ public class BudgetApp {
     }
 
 
-    // EFFECTS: processes user input for title for new category
-    // nextAction 0 = new amount
-    // nextAction 1 = new range
-    private void newCategory(int nextAction) {
-        if (nextAction == 0) {
-            addAmount(" the amount");
+    // MODIFIES: currentBudget
+    // EFFECTS: processes user input for new category and then moves to edit
+    private void newCategory() {
+        System.out.println("Would you like to create a new amount or new range?");
+        System.out.println("r: new range");
+        System.out.println("a: new amount");
+        String answer = input.next();
+        if (answer.equals("a")) {
+            Amount amount = new Amount("the amount", 0);
+            currentBudget.addAmount(amount);
+            editAmount(amount);
+        } else if (answer.equals("r")) {
+            Range range = new Range("the range", 0, 1);
+            currentBudget.addRange(range);
+            editRange(range);
         } else {
-            addRange("the range");
+            System.out.println("Answer not valid.");
+            newCategory();
         }
-    }
-
-    // REQUIRES: String name not ""
-    // MODIFIES: this
-    // EFFECTS: adds range and inputs range to editRange
-    private void addRange(String name) {
-        Range range = new Range(name, 0, 1);
-        currentBudget.addRange(range);
-        editRange(range);
-    }
-
-    // REQUIRES: String name not ""
-    // MODIFIES: this
-    // EFFECTS: adds amount with given value
-    private void addAmount(String name) {
-        System.out.println("Enter an amount for " + name);
-        int answer = input.nextInt();
-        currentBudget.addAmount(name, answer);
     }
 
 
@@ -251,10 +242,9 @@ public class BudgetApp {
         showInfo();
         System.out.println("Controls: ");
         System.out.println("i: edit income");
-        System.out.println("x: edit a spending category");
-        System.out.println("r: add a new spending category (range)"); // condense
-        System.out.println("a: add a new spending category (definite amount)");
-        System.out.println("e: remove a spending category");
+        System.out.println("e: edit a spending category");
+        System.out.println("a: add a new spending category");
+        System.out.println("r: remove a spending category");
         System.out.println("s: view savings");
         System.out.println("f: save budget to file");
         System.out.println("l: load budget from file");
