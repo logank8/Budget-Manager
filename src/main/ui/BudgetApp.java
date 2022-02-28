@@ -6,7 +6,6 @@ import persistence.JsonWriter;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.sql.SQLOutput;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
@@ -74,7 +73,8 @@ public class BudgetApp {
     // EFFECTS: adds user int input to income & outputs new income value
     private void changeIncome() {
         System.out.println("Please enter a value to add to income");
-        int answer = input.nextInt();
+        int answer;
+        answer = input.nextInt();
         if ((currentBudget.getIncome() + answer) < 0) {
             System.out.println("Answer not valid");
             changeIncome();
@@ -148,19 +148,6 @@ public class BudgetApp {
     }
 
     // REQUIRES: category object not null
-    // MODIFIES: category
-    // EFFECTS: processes user input to change title of category
-    private void nameCategory(Category category) {
-        System.out.println("Enter new name for " + category.getTitle());
-        String answer = input.next().toLowerCase();
-        if (allNames().contains(answer)) {
-            System.out.println("A category already has that name.");
-        } else {
-            category.setTitle(answer);
-        }
-    }
-
-    // REQUIRES: category object not null
     // EFFECTS: finds if category is a range or amount, then call editRange or editAmount respectively
     private void editCategory(Category category) {
         String categoryName = category.getTitle().toLowerCase();
@@ -205,6 +192,9 @@ public class BudgetApp {
     // MODIFIES: amount
     // EFFECTS: processes user input for new value for amount
     private void editAmount(Amount amount) {
+        System.out.println("Enter a new name for " + amount.getTitle());
+        String newName = input.next();
+        amount.setTitle(newName);
         System.out.println("Please input new value for " + amount.getTitle());
         int answer = input.nextInt();
         if (answer >= 0) {
