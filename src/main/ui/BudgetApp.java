@@ -15,8 +15,8 @@ public class BudgetApp {
     public static final String JSON_STORE = "./data/budget.json";
     private Budget currentBudget;
     private Scanner input;
-    private JsonWriter jsonWriter;
-    private JsonReader jsonReader;
+    private final JsonWriter jsonWriter;
+    private final JsonReader jsonReader;
 
     // EFFECTS: runs budget app
     public BudgetApp() throws FileNotFoundException {
@@ -80,7 +80,7 @@ public class BudgetApp {
             changeIncome();
         } else {
             currentBudget.addIncome(answer);
-            System.out.println("New income: " + currentBudget.getIncome());
+            System.out.println("New income is " + currentBudget.getIncome());
         }
     }
 
@@ -164,9 +164,7 @@ public class BudgetApp {
     // MODIFIES: range
     // EFFECTS: processes user input for new lower & upper bounds for range
     private void editRange(Range range) {
-        System.out.println("Enter a new name for " + range.getTitle());
-        String newName = input.next();
-        range.setTitle(newName);
+        editRangeName(range);
         System.out.println("Enter a lower bound for " + range.getTitle());
         int answer = input.nextInt();
         if (answer >= 0) {
@@ -188,20 +186,36 @@ public class BudgetApp {
         }
     }
 
+    private void editRangeName(Range range) {
+        System.out.println("Enter a new name for " + range.getTitle());
+        String newName = input.next();
+        if (allNames().contains(newName.toLowerCase())) {
+            System.out.println("A category already has that name.");
+            editRangeName(range);
+        } else {
+            range.setTitle(newName);
+        }
+    }
+
     // REQUIRES: amount object not null
     // MODIFIES: amount
     // EFFECTS: processes user input for new value for amount
     private void editAmount(Amount amount) {
         System.out.println("Enter a new name for " + amount.getTitle());
         String newName = input.next();
-        amount.setTitle(newName);
-        System.out.println("Please input new value for " + amount.getTitle());
-        int answer = input.nextInt();
-        if (answer >= 0) {
-            amount.setAmount(answer);
-        } else {
-            System.out.println("Answer not valid.");
+        if (allNames().contains(newName.toLowerCase())) {
+            System.out.println("A category already has that name.");
             editAmount(amount);
+        } else {
+            amount.setTitle(newName);
+            System.out.println("Please input new value for " + amount.getTitle());
+            int answer = input.nextInt();
+            if (answer >= 0) {
+                amount.setAmount(answer);
+            } else {
+                System.out.println("Answer not valid.");
+                editAmount(amount);
+            }
         }
     }
 
@@ -243,18 +257,26 @@ public class BudgetApp {
 
     // EFFECTS: outputs budget income, ranges, and amounts
     private void showInfo() {
-        System.out.println("Current Budget: ");
+        System.out.println("CURRENT BUDGET: ");
         System.out.println("Income: " + currentBudget.getIncome());
         if (currentBudget.getCategories().isEmpty()) {
             System.out.println("No categories created yet");
         } else {
-            System.out.println("Ranges: ");
-            for (Range r : currentBudget.getRanges()) {
-                System.out.println(r.getTitle() + ": " + r.getRange());
+            if (currentBudget.getRanges().isEmpty()) {
+                System.out.println("No ranges created yet");
+            } else {
+                System.out.println("Ranges: ");
+                for (Range r : currentBudget.getRanges()) {
+                    System.out.println(r.getTitle() + ": " + r.getRange());
+                }
             }
-            System.out.println("Definite amounts: ");
-            for (Amount a : currentBudget.getAmounts()) {
-                System.out.println(a.getTitle() + ": " + a.getAmount());
+            if (currentBudget.getAmounts().isEmpty()) {
+                System.out.println("No amounts created yet");
+            } else {
+                System.out.println("Amounts: ");
+                for (Amount a : currentBudget.getAmounts()) {
+                    System.out.println(a.getTitle() + ": " + a.getAmount());
+                }
             }
         }
     }

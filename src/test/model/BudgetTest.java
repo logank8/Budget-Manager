@@ -10,13 +10,11 @@ class BudgetTest {
 
     private Budget testBudget;
     private Amount A1;
-    private Category C1;
 
     @BeforeEach
     public void runBefore() {
         testBudget = new Budget();
         A1 = new Amount("A1", 0);
-        C1 = new Amount("C1", 0);
     }
 
     @Test

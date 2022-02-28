@@ -1,5 +1,9 @@
 {
-    "income": 0,
-    "ranges": [],
+    "income": 5000,
+    "ranges": [{
+        "high": 60,
+        "low": 40,
+        "title": "test"
+    }],
     "amounts": []
 }
