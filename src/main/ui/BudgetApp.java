@@ -6,7 +6,7 @@ import persistence.JsonWriter;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Scanner;
 
@@ -284,7 +284,7 @@ public class BudgetApp {
 
     // EFFECTS: creates corresponding list of titles of every category
     private List<String> allNames() {
-        List<String> names = new ArrayList<>();
+        List<String> names = new LinkedList<>();
         for (Category c : currentBudget.getCategories()) {
             names.add(c.getTitle().toLowerCase());
         }
@@ -293,7 +293,7 @@ public class BudgetApp {
 
     // EFFECTS: creates corresponding list of titles of every range
     private List<String> rangeNames() {
-        List<String> names = new ArrayList<>();
+        List<String> names = new LinkedList<>();
         for (Range r : currentBudget.getRanges()) {
             names.add(r.getTitle().toLowerCase());
         }
@@ -302,7 +302,7 @@ public class BudgetApp {
 
     // EFFECTS: creates corresponding list of titles of every amount
     private List<String> amountNames() {
-        List<String> names = new ArrayList<>();
+        List<String> names = new LinkedList<>();
         for (Amount a : currentBudget.getAmounts()) {
             names.add(a.getTitle().toLowerCase());
         }

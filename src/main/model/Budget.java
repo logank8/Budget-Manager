@@ -4,7 +4,7 @@ import org.json.JSONArray;
 import org.json.JSONObject;
 import persistence.Writable;
 
-import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
 
 // Represents a Budget with a given amount of categories (divided into corresponding lists of ranges and amounts),
@@ -20,9 +20,9 @@ public class Budget implements Writable {
     // EFFECTS: creates a new Budget with no categories and income set at 0
     public Budget() {
         income = 0;
-        categories = new ArrayList<>();
-        ranges = new ArrayList<>();
-        amounts = new ArrayList<>();
+        categories = new LinkedList<>();
+        ranges = new LinkedList<>();
+        amounts = new LinkedList<>();
     }
 
     // REQUIRES: amount > 0
