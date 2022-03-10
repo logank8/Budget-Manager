@@ -39,7 +39,6 @@ public class Budget implements Writable {
         categories.add(range);
     }
 
-    // !!! FIX
     // MODIFIES: this
     // EFFECTS: creates new amount with given title and amount 0, adds to amounts and categories lists
     public void addAmount(Amount newAmount) {
@@ -107,6 +106,7 @@ public class Budget implements Writable {
         return amounts;
     }
 
+    // EFFECTS: writes budget to json
     @Override
     public JSONObject toJson() {
         JSONObject json = new JSONObject();
@@ -116,6 +116,7 @@ public class Budget implements Writable {
         return json;
     }
 
+    // EFFECTS: writes ranges to json
     private JSONArray rangesToJson() {
         JSONArray jsonArray = new JSONArray();
 
@@ -126,6 +127,7 @@ public class Budget implements Writable {
         return jsonArray;
     }
 
+    // EFFECTS: writes amounts to json
     private JSONArray amountsToJson() {
         JSONArray jsonArray = new JSONArray();
 

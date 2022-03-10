@@ -6,6 +6,7 @@ import java.io.PrintWriter;
 import model.Budget;
 import org.json.*;
 
+// Writes to JSON
 public class JsonWriter {
 
     private static final int TAB = 4;

@@ -49,6 +49,7 @@ public class Range extends Category implements Writable {
         return high;
     }
 
+    // EFFECTS: writes range to json
     @Override
     public JSONObject toJson() {
         JSONObject json = new JSONObject();

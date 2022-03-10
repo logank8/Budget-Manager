@@ -25,6 +25,7 @@ public class Amount extends Category {
         return amount;
     }
 
+    // EFFECTS: writes amount to json
     @Override
     public JSONObject toJson() {
         JSONObject json = new JSONObject();

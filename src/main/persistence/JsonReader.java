@@ -12,6 +12,7 @@ import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.stream.Stream;
 
+// Reads from JSON
 public class JsonReader {
     private final String source;
 
@@ -69,6 +70,8 @@ public class JsonReader {
         b.addRange(range);
     }
 
+    // MODIFIES: b
+    // EFFECTS: parses amounts from JSON object and adds them to budget
     private void addAmounts(Budget b, JSONObject jsonObject) {
         JSONArray jsonArray = jsonObject.getJSONArray("amounts");
         for (Object json : jsonArray) {
@@ -77,6 +80,8 @@ public class JsonReader {
         }
     }
 
+    // MODIFIES: b
+    // EFFECTS: parses range from JSON object and adds to budget
     private void addAmount(Budget b, JSONObject jsonObject) {
         String title = jsonObject.getString("title");
         int amount = jsonObject.getInt("amount");

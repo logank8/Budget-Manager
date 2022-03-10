@@ -219,8 +219,7 @@ public class BudgetApp {
         }
     }
 
-
-
+    // EFFECTS: saves current budget
     private void saveBudget() {
         try {
             jsonWriter.open();
@@ -232,6 +231,8 @@ public class BudgetApp {
         }
     }
 
+    // MODIFIES: currentBudget
+    // EFFECTS: loads budget from json
     private void loadBudget() {
         try {
             currentBudget = jsonReader.read();
