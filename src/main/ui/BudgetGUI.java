@@ -3,14 +3,10 @@ package ui;
 import model.Budget;
 
 import javax.swing.*;
-import javax.swing.text.JTextComponent;
 import java.awt.*;
-import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
-import java.text.DecimalFormat;
-import java.text.Format;
-import java.text.NumberFormat;
+
 
 public class BudgetGUI extends JFrame implements MouseListener {
     private static final int WIDTH = 800;
