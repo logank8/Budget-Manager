@@ -19,7 +19,7 @@ public class BudgetApp {
     private final JsonReader jsonReader;
 
     // EFFECTS: runs budget app
-    public BudgetApp() throws FileNotFoundException {
+    public BudgetApp() {
         jsonWriter = new JsonWriter(JSON_STORE);
         jsonReader = new JsonReader(JSON_STORE);
         runBudget();
@@ -79,7 +79,7 @@ public class BudgetApp {
             System.out.println("Answer not valid");
             changeIncome();
         } else {
-            currentBudget.addIncome(answer);
+            currentBudget.setIncome(answer);
             System.out.println("New income is " + currentBudget.getIncome());
         }
     }

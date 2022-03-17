@@ -4,8 +4,11 @@ import model.Budget;
 
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.ActionEvent;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
+
+import static java.lang.Integer.parseInt;
 
 
 public class BudgetGUI extends JFrame implements MouseListener {
@@ -15,6 +18,8 @@ public class BudgetGUI extends JFrame implements MouseListener {
     private JDesktopPane desktop;
     private JLabel income;
     private JInternalFrame infoPanel;
+    private JMenuBar menuBar;
+    private JMenu fileHandler;
 
     public BudgetGUI() {
         budget = new Budget();
@@ -24,6 +29,12 @@ public class BudgetGUI extends JFrame implements MouseListener {
         setTitle("CPSC 210: Budget Manager");
         setSize(WIDTH, HEIGHT);
 
+        menuBar = new JMenuBar();
+        fileHandler = new JMenu("File...");
+        addSave();
+        menuBar.add(fileHandler);
+
+
         infoPanel = new JInternalFrame("INFO", false, false,
                 false, false);
         infoPanel.setLayout(new FlowLayout());
@@ -31,10 +42,17 @@ public class BudgetGUI extends JFrame implements MouseListener {
         infoPanel.setVisible(true);
         infoPanel.reshape(20, 20, 500, 200);
         addIncome();
+        infoPanel.setJMenuBar(menuBar);
+
         setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
         centreOnScreen();
         desktop.setBackground(Color.magenta.darker().darker());
         setVisible(true);
+    }
+
+    private void addSave() {
+        JMenuItem save = new JMenuItem("Save budget");
+        fileHandler.add(save);
     }
 
 
@@ -53,11 +71,32 @@ public class BudgetGUI extends JFrame implements MouseListener {
         infoPanel.add(income);
         income.setBounds(0, 0, 100, 30);
 
-        JButton editButton = new JButton();
+        JButton editButton = new JButton(new EditIncomeAction());
         editButton.setSize(30, 30);
         editButton.setText("Edit");
         editButton.setVisible(true);
         infoPanel.add(editButton);
+    }
+
+    private class EditIncomeAction extends AbstractAction {
+
+        public EditIncomeAction() {
+            super("Edit Income");
+        }
+
+        @Override
+        public void actionPerformed(ActionEvent e) {
+            String input = JOptionPane.showInputDialog(new JFormattedTextField(),
+                    "Please input new value for income");
+            if (!input.isEmpty()) {
+                try {
+                    budget.setIncome(parseInt(input));
+                    income.setText("Income: " + budget.getIncome());
+                } catch (NumberFormatException exception) {
+                    JOptionPane.showMessageDialog(null, "ERROR: Integer value expected");
+                }
+            }
+        }
     }
 
     @Override

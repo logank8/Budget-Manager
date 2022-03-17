@@ -44,7 +44,7 @@ public class JsonWriterTest extends JsonTest {
     void testWriterGeneralBudget() {
         try {
             Budget b = new Budget();
-            b.addIncome(800);
+            b.setIncome(800);
             b.addRange(new Range("testrange", 0, 100));
             b.addAmount(new Amount("testamount", 100));
             b.addAmount(new Amount("anothertestamount", 200));

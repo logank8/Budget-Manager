@@ -44,7 +44,7 @@ public class JsonReader {
     private Budget parseBudget(JSONObject jsonObject) {
         Budget b = new Budget();
         int income = jsonObject.getInt("income");
-        b.addIncome(income);
+        b.setIncome(income);
         addRanges(b, jsonObject);
         addAmounts(b, jsonObject);
         return b;
