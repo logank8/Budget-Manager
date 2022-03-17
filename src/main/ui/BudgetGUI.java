@@ -7,9 +7,6 @@ import persistence.JsonWriter;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.MouseEvent;
-import java.awt.event.MouseListener;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 
@@ -23,8 +20,12 @@ public class BudgetGUI extends JFrame {
 
     private Budget budget;
     private JLabel income;
+    private JLabel savings;
+    private final JDesktopPane desktop;
     private final JInternalFrame infoPanel;
+    private final JMenuBar menuBar;
     private final JMenu fileHandler;
+    private final JMenu addMenu;
 
     private JsonWriter jsonWriter;
     private JsonReader jsonReader;
@@ -32,7 +33,7 @@ public class BudgetGUI extends JFrame {
 
     public BudgetGUI() {
         budget = new Budget();
-        JDesktopPane desktop = new JDesktopPane();
+        desktop = new JDesktopPane();
         jsonWriter = new JsonWriter(JSON_STORE);
         jsonReader = new JsonReader(JSON_STORE);
 
@@ -40,25 +41,40 @@ public class BudgetGUI extends JFrame {
         setTitle("CPSC 210: Budget Manager");
         setSize(WIDTH, HEIGHT);
 
-        JMenuBar menuBar = new JMenuBar();
+        infoPanel = new JInternalFrame("INFO", false, false,
+                false, false);
+        configureInfoPanel();
+        menuBar = new JMenuBar();
         fileHandler = new JMenu("File...");
         addSaveAndLoad();
         menuBar.add(fileHandler);
 
-
-        infoPanel = new JInternalFrame("INFO", false, false,
-                false, false);
-        infoPanel.setLayout(new FlowLayout());
-        desktop.add(infoPanel);
-        infoPanel.setVisible(true);
-        infoPanel.reshape(20, 20, 500, 200);
-        addIncome();
-        infoPanel.setJMenuBar(menuBar);
+        addMenu = new JMenu("Add...");
+        optionsRangeAmount();
+        menuBar.add(addMenu);
 
         setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
         centreOnScreen();
         desktop.setBackground(Color.magenta.darker().darker());
         setVisible(true);
+    }
+
+    private void configureInfoPanel() {
+        infoPanel.setLayout(new FlowLayout());
+        desktop.add(infoPanel);
+        infoPanel.setVisible(true);
+        infoPanel.reshape(20, 20, 200, 140);
+        addIncome();
+        addSavings();
+        infoPanel.setJMenuBar(menuBar);
+    }
+
+    private void optionsRangeAmount() {
+        JMenuItem addAmount = new JMenuItem("New amount");
+        addAmount.addActionListener(new AddAmountAction());
+        JMenuItem addRange = new JMenuItem("New range");
+        addMenu.add(addAmount);
+        addMenu.add(addRange);
     }
 
     private void addSaveAndLoad() {
@@ -81,12 +97,13 @@ public class BudgetGUI extends JFrame {
     }
 
     private void displayUpdate() {
-        income.setText("Income: " + budget.getIncome());
+        income.setText("INCOME: " + budget.getIncome());
+        savings.setText("SAVINGS: " + budget.getSavings());
     }
 
     private void addIncome() {
         income = new JLabel();
-        income.setText("Income: " + budget.getIncome());
+        income.setText("INCOME: " + budget.getIncome());
         income.setOpaque(true);
         income.setVisible(true);
         infoPanel.add(income);
@@ -97,6 +114,21 @@ public class BudgetGUI extends JFrame {
         editButton.setText("Edit");
         editButton.setVisible(true);
         infoPanel.add(editButton);
+    }
+
+    private void addSavings() {
+        savings = new JLabel();
+        savings.setText("SAVINGS: " + budget.getSavings());
+        savings.setVisible(true);
+        infoPanel.add(savings);
+    }
+
+    private void categoryPanel() {
+
+    }
+
+    private void addAmount() {
+
     }
 
     private void saveBudget() {
@@ -136,7 +168,7 @@ public class BudgetGUI extends JFrame {
             if (input != null) {
                 try {
                     budget.setIncome(parseInt(input));
-                    income.setText("Income: " + budget.getIncome());
+                    displayUpdate();
                 } catch (NumberFormatException e2) {
                     JOptionPane.showMessageDialog(null, "ERROR: Integer value expected");
                 }
@@ -166,6 +198,18 @@ public class BudgetGUI extends JFrame {
         @Override
         public void actionPerformed(ActionEvent e) {
             loadBudget();
+        }
+    }
+
+    private class AddAmountAction extends AbstractAction {
+
+        public AddAmountAction() {
+            super("Add amount");
+        }
+
+        @Override
+        public void actionPerformed(ActionEvent e) {
+            addAmount();
         }
     }
 }
