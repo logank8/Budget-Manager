@@ -21,6 +21,8 @@ public class BudgetGUI extends JFrame {
     private Budget budget;
     private JLabel income;
     private JLabel savings;
+    private JPanel addAmountPane;
+
     private final JDesktopPane desktop;
     private final JInternalFrame infoPanel;
     private final JMenuBar menuBar;
@@ -52,7 +54,8 @@ public class BudgetGUI extends JFrame {
         addMenu = new JMenu("Add...");
         optionsRangeAmount();
         menuBar.add(addMenu);
-
+        menuBar.setVisible(true);
+        infoPanel.setJMenuBar(menuBar);
         setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
         centreOnScreen();
         desktop.setBackground(Color.magenta.darker().darker());
@@ -63,10 +66,9 @@ public class BudgetGUI extends JFrame {
         infoPanel.setLayout(new FlowLayout());
         desktop.add(infoPanel);
         infoPanel.setVisible(true);
-        infoPanel.reshape(20, 20, 200, 140);
+        infoPanel.reshape(20, 20, 220, 160);
         addIncome();
         addSavings();
-        infoPanel.setJMenuBar(menuBar);
     }
 
     private void optionsRangeAmount() {
@@ -128,7 +130,12 @@ public class BudgetGUI extends JFrame {
     }
 
     private void addAmount() {
-
+        addAmountPane = new JPanel();
+        JLabel name = new JLabel("NAME: ");
+        addAmountPane.add(name);
+        JTextField nameField = new JTextField("name");
+        desktop.add(addAmountPane);
+        setVisible(true);
     }
 
     private void saveBudget() {
