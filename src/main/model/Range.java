@@ -1,6 +1,7 @@
 package model;
 
 
+import exceptions.UnevenRangeException;
 import org.json.JSONObject;
 import persistence.Writable;
 
@@ -17,6 +18,11 @@ public class Range extends Category implements Writable {
         this.high = high;
     }
 
+    @Override
+    public String getValString() {
+        return low + " - " + high;
+    }
+
     // EFFECTS: returns difference between high and low
     public int getDifference() {
         return high - low;
@@ -30,8 +36,12 @@ public class Range extends Category implements Writable {
 
     // MODIFIES: this
     // EFFECTS: sets high to given values
-    public void setHigh(int newHigh) {
-        high = newHigh;
+    public void setHigh(int newHigh) throws UnevenRangeException {
+        if (newHigh <= low) {
+            throw new UnevenRangeException();
+        } else {
+            high = newHigh;
+        }
     }
 
     // EFFECTS: returns string of lower and upper bounds

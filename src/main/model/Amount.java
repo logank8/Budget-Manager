@@ -14,6 +14,11 @@ public class Amount extends Category {
 
     }
 
+    @Override
+    public String getValString() {
+        return "" + amount;
+    }
+
     // MODIFIES: this
     // EFFECTS: changes amount to given number
     public void setAmount(int newAmount) {

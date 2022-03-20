@@ -28,8 +28,8 @@ public class Budget implements Writable {
     // REQUIRES: amount > 0
     // MODIFIES: this
     // EFFECTS: increases income by given amount
-    public void addIncome(int amount) {
-        income += amount;
+    public void setIncome(int amount) {
+        income = amount;
     }
 
     // MODIFIES: this
