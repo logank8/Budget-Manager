@@ -1,7 +1,9 @@
 package ui;
 
+import exceptions.UnevenRangeException;
 import model.Amount;
 import model.Budget;
+import model.Range;
 import persistence.JsonReader;
 import persistence.JsonWriter;
 
@@ -24,20 +26,20 @@ public class BudgetGUI extends JFrame {
     private Budget budget;
     private JLabel income;
     private JLabel savings;
-    private JPanel addAmountPane;
 
     private final JDesktopPane desktop;
     private JInternalFrame infoPanel;
-    private JMenuBar menuBar;
     private JMenu fileHandler;
     private JMenu addMenu;
     private GridBagConstraints gc;
+    private static final Color goodColor = Color.getHSBColor(0.03F, 0.03F, 0.94F);
 
-    private ArrayList<JInternalFrame> amounts;
-    private ArrayList<JInternalFrame> ranges;
+    private final ArrayList<JInternalFrame> categories;
+    private final ArrayList<AmountPane> amounts;
+    private final ArrayList<RangePane> ranges;
 
-    private JsonWriter jsonWriter;
-    private JsonReader jsonReader;
+    private final JsonWriter jsonWriter;
+    private final JsonReader jsonReader;
     public static final String JSON_STORE = "./data/budget.json";
 
     public BudgetGUI() {
@@ -47,11 +49,12 @@ public class BudgetGUI extends JFrame {
         jsonReader = new JsonReader(JSON_STORE);
 
         setContentPane(desktop);
-        setTitle("CPSC 210: Budget Manager");
+        setTitle("Budget Manager");
         setSize(WIDTH, HEIGHT);
 
-        amounts = new ArrayList<JInternalFrame>();
-        ranges = new ArrayList<JInternalFrame>();
+        categories = new ArrayList<JInternalFrame>();
+        amounts = new ArrayList<AmountPane>();
+        ranges = new ArrayList<RangePane>();
 
         configureInfoPanel();
 
@@ -63,16 +66,18 @@ public class BudgetGUI extends JFrame {
     }
 
     private void configureInfoPanel() {
+        int panelCounter = 0;
         infoPanel = new JInternalFrame("INFO", false, false, false);
+        infoPanel.setBackground(goodColor);
         desktop.add(infoPanel);
         GridBagLayout layout = new GridBagLayout();
         infoPanel.setLayout(layout);
         gc = new GridBagConstraints();
         infoPanel.setVisible(true);
-        infoPanel.reshape(10, 20, 780, 500);
+        infoPanel.reshape(5, 20, 790, 120);
         addIncome();
         addSavings();
-        menuBar = new JMenuBar();
+        JMenuBar menuBar = new JMenuBar();
         fileHandler = new JMenu("File...");
         addSaveAndLoad();
         menuBar.add(fileHandler);
@@ -86,18 +91,17 @@ public class BudgetGUI extends JFrame {
 
     private void optionsRangeAmount() {
         JMenuItem addAmount = new JMenuItem("New amount");
-        addAmount.addActionListener(new AddAmountAction());
+        addAmount.addActionListener(new AddAmountAction(this));
         JMenuItem addRange = new JMenuItem("New range");
+        addRange.addActionListener(new AddRangeAction(this));
         addMenu.add(addAmount);
         addMenu.add(addRange);
     }
 
     private void addSaveAndLoad() {
         JMenuItem save = new JMenuItem("Save");
-        save.getAccessibleContext().setAccessibleDescription("Save budget to file");
         save.addActionListener(new SaveAction());
         JMenuItem load = new JMenuItem("Load");
-        load.getAccessibleContext().setAccessibleDescription("Load budget from file");
         load.addActionListener(new LoadAction());
         fileHandler.add(save);
         fileHandler.add(load);
@@ -112,16 +116,23 @@ public class BudgetGUI extends JFrame {
     }
 
     private void displayUpdate() {
+        for (AmountPane amount : amounts) {
+            amount.displayUpdate();
+        }
+        for (RangePane range : ranges) {
+            range.displayUpdate();
+        }
         income.setText("INCOME: " + budget.getIncome());
         savings.setText("SAVINGS: " + budget.getSavings());
     }
 
     private void addIncome() {
         income = new JLabel();
-        income.setText("INCOME: " + budget.getIncome());
+        income.setText("INCOME: " + budget.getIncome() + "    ");
         income.setOpaque(true);
         income.setVisible(true);
-        gc.gridx = 0;
+        gc.weightx = 0.1;
+        gc.gridx = 1;
         gc.gridy = 0;
         infoPanel.add(income, gc);
 
@@ -129,16 +140,18 @@ public class BudgetGUI extends JFrame {
         editButton.setSize(30, 30);
         editButton.setText("Edit");
         editButton.setVisible(true);
-        gc.gridx = 1;
-        infoPanel.add(editButton);
+        gc.gridy = 1;
+        infoPanel.add(editButton, gc);
     }
 
     private void addSavings() {
         savings = new JLabel();
         savings.setText("SAVINGS: " + budget.getSavings());
         savings.setVisible(true);
-        savings.setVerticalAlignment(0);
+        savings.setVerticalAlignment(SwingConstants.TOP);
+        gc.weightx = 0.1;
         gc.gridx = 2;
+        gc.gridy = 0;
         infoPanel.add(savings, gc);
     }
 
@@ -158,6 +171,22 @@ public class BudgetGUI extends JFrame {
     private void loadBudget() {
         try {
             budget = jsonReader.read();
+            amounts.clear();
+            ranges.clear();
+            for (JInternalFrame panel : categories) {
+                panel.setVisible(false);
+            }
+            categories.clear();
+            for (Amount amount : budget.getAmounts()) {
+                AmountPane amountPane = new AmountPane(amount, this);
+                amounts.add(amountPane);
+                categories.add(amountPane);
+            }
+            for (Range range : budget.getRanges()) {
+                RangePane rangePane = new RangePane(range, this);
+                ranges.add(rangePane);
+                categories.add(rangePane);
+            }
             displayUpdate();
             JOptionPane.showMessageDialog(null, "Loaded current budget from " + JSON_STORE);
         } catch (IOException e) {
@@ -190,46 +219,179 @@ public class BudgetGUI extends JFrame {
 
     private class AmountPane extends JInternalFrame {
 
+        BudgetGUI parent;
+        Amount amount;
         JLabel valText;
         JLabel nameText;
         JButton editButton;
 
-        public AmountPane(Amount amount) {
+        public AmountPane(Amount amount, BudgetGUI parent) {
             super("", false, false, false, false);
-            setLayout(new FlowLayout());
+            setBackground(goodColor);
+            this.amount = amount;
+            this.parent = parent;
+            setLayout(new GridLayout(3, 1));
             nameText = new JLabel("NAME: " + amount.getTitle());
             valText = new JLabel("VALUE: " + amount.getValString());
             editButton = new JButton("EDIT");
+            editButton.addActionListener(new EditAction());
             this.add(nameText);
             this.add(valText);
             this.add(editButton);
-            reshape(300, 300, 200, 200);
-            gc.gridx = 0;
-            gc.gridy = 2;
-            infoPanel.add(this, gc);
+            reshape(300, 300, 200, 150);
+            desktop.add(this);
             setVisible(true);
+        }
+
+        public void displayUpdate() {
+            nameText.setText("NAME: " + amount.getTitle());
+            valText.setText("VALUE: " + amount.getValString());
         }
 
         private class EditAction extends AbstractAction {
             public EditAction() {
                 super("Edit amount");
+            }
 
+            public void actionPerformed(ActionEvent e) {
+                String ansInput = JOptionPane.showInputDialog(null,
+                        "Enter a new name for the category");
+                amount.setTitle(ansInput);
+                String amountInput = JOptionPane.showInputDialog(null,
+                        "Enter a new value for the category");
+                try {
+                    amount.setAmount(Integer.parseInt(amountInput));
+                    parent.displayUpdate();
+                } catch (NumberFormatException e2) {
+                    JOptionPane.showMessageDialog(null, "ERROR: Integer value expected");
+                }
+            }
+        }
+    }
+
+    private class RangePane extends JInternalFrame {
+
+        BudgetGUI parent;
+        Range range;
+        JLabel valText;
+        JLabel nameText;
+        JButton editButton;
+        JButton removeButton;
+
+        public RangePane(Range range, BudgetGUI parent) {
+            super("", false, false, false, false);
+            setBackground(goodColor);
+            this.range = range;
+            this.parent = parent;
+            setLayout(new GridLayout(4, 1));
+            nameText = new JLabel("NAME: " + range.getTitle());
+            valText = new JLabel("VALUE: " + range.getValString());
+            editButton = new JButton("EDIT");
+            editButton.addActionListener(new EditAction());
+            removeButton = new JButton("REMOVE");
+            removeButton.addActionListener(new RemoveAction(this));
+            this.add(nameText);
+            this.add(valText);
+            this.add(editButton);
+            this.add(removeButton);
+            reshape(300, 300, 200, 160);
+            desktop.add(this);
+            setVisible(true);
+        }
+
+        public void displayUpdate() {
+            nameText.setText("NAME: " + range.getTitle());
+            valText.setText("VALUE: " + range.getValString());
+        }
+
+        private class EditAction extends AbstractAction {
+            public EditAction() {
+                super("Edit range");
+            }
+
+            public void actionPerformed(ActionEvent e) {
+                String ansInput = JOptionPane.showInputDialog(null,
+                        "Enter a new name for the category");
+                range.setTitle(ansInput);
+
+                String lowInput = JOptionPane.showInputDialog(null,
+                        "Enter a new lower value for the range");
+                try {
+                    range.setLow(Integer.parseInt(lowInput));
+                    String highInput = JOptionPane.showInputDialog(null,
+                            "Enter a new higher value for the range");
+                    try {
+                        range.setHigh(Integer.parseInt(highInput));
+                        parent.displayUpdate();
+                    } catch (UnevenRangeException r) {
+                        JOptionPane.showMessageDialog(null,
+                                "ERROR: second value must be greater than first");
+                    } catch (NumberFormatException e3) {
+                        JOptionPane.showMessageDialog(null, "ERROR: Integer value expected");
+                    }
+                } catch (NumberFormatException e2) {
+                    JOptionPane.showMessageDialog(null, "ERROR: Integer value expected");
+                }
             }
         }
 
+        private class RemoveAction extends AbstractAction {
+
+            RangePane panel;
+
+            public RemoveAction(RangePane panel) {
+                super("Remove category");
+                this.panel = panel;
+            }
+
+            public void actionPerformed(ActionEvent e) {
+                int confirm = JOptionPane.showConfirmDialog(null,
+                        "Are you sure you want to delete this?");
+                if (confirm == 0) {
+                    categories.remove(panel);
+                    ranges.remove(panel);
+                    panel.setVisible(false);
+                }
+            }
+        }
     }
 
     private class AddAmountAction extends AbstractAction {
 
-        public AddAmountAction() {
+        BudgetGUI parent;
+
+        public AddAmountAction(BudgetGUI parent) {
             super("Add amount");
+            this.parent = parent;
         }
 
         @Override
         public void actionPerformed(ActionEvent e) {
             Amount newAmount = new Amount("", 0);
-            amounts.add(new AmountPane(newAmount));
-            displayUpdate();
+            budget.addAmount(newAmount);
+            AmountPane amountPane = new AmountPane(newAmount, parent);
+            amounts.add(amountPane);
+            categories.add(amountPane);
+            parent.displayUpdate();
+        }
+    }
+
+    private class AddRangeAction extends AbstractAction {
+        BudgetGUI parent;
+
+        public AddRangeAction(BudgetGUI parent) {
+            super("Add range");
+            this.parent = parent;
+        }
+
+        @Override
+        public void actionPerformed(ActionEvent e) {
+            Range newRange = new Range("", 0, 1);
+            budget.addRange(newRange);
+            RangePane rangePane = new RangePane(newRange, parent);
+            ranges.add(rangePane);
+            categories.add(rangePane);
+            parent.displayUpdate();
         }
     }
 
