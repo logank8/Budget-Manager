@@ -1,5 +1,6 @@
 package ui;
 
+import model.Amount;
 import model.Budget;
 import persistence.JsonReader;
 import persistence.JsonWriter;
@@ -7,8 +8,10 @@ import persistence.JsonWriter;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.util.*;
 
 import static java.lang.Integer.parseInt;
 
@@ -24,10 +27,14 @@ public class BudgetGUI extends JFrame {
     private JPanel addAmountPane;
 
     private final JDesktopPane desktop;
-    private final JInternalFrame infoPanel;
-    private final JMenuBar menuBar;
-    private final JMenu fileHandler;
-    private final JMenu addMenu;
+    private JInternalFrame infoPanel;
+    private JMenuBar menuBar;
+    private JMenu fileHandler;
+    private JMenu addMenu;
+    private GridBagConstraints gc;
+
+    private ArrayList<JInternalFrame> amounts;
+    private ArrayList<JInternalFrame> ranges;
 
     private JsonWriter jsonWriter;
     private JsonReader jsonReader;
@@ -43,32 +50,38 @@ public class BudgetGUI extends JFrame {
         setTitle("CPSC 210: Budget Manager");
         setSize(WIDTH, HEIGHT);
 
-        infoPanel = new JInternalFrame("INFO", false, false,
-                false, false);
+        amounts = new ArrayList<JInternalFrame>();
+        ranges = new ArrayList<JInternalFrame>();
+
         configureInfoPanel();
+
+        setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
+        centreOnScreen();
+        Color goodColor = Color.getHSBColor(.29F, .19F, .38F);
+        desktop.setBackground(goodColor);
+        setVisible(true);
+    }
+
+    private void configureInfoPanel() {
+        infoPanel = new JInternalFrame("INFO", false, false, false);
+        desktop.add(infoPanel);
+        GridBagLayout layout = new GridBagLayout();
+        infoPanel.setLayout(layout);
+        gc = new GridBagConstraints();
+        infoPanel.setVisible(true);
+        infoPanel.reshape(10, 20, 780, 500);
+        addIncome();
+        addSavings();
         menuBar = new JMenuBar();
         fileHandler = new JMenu("File...");
         addSaveAndLoad();
         menuBar.add(fileHandler);
-
         addMenu = new JMenu("Add...");
         optionsRangeAmount();
         menuBar.add(addMenu);
         menuBar.setVisible(true);
         infoPanel.setJMenuBar(menuBar);
-        setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
-        centreOnScreen();
-        desktop.setBackground(Color.magenta.darker().darker());
-        setVisible(true);
-    }
 
-    private void configureInfoPanel() {
-        infoPanel.setLayout(new FlowLayout());
-        desktop.add(infoPanel);
-        infoPanel.setVisible(true);
-        infoPanel.reshape(20, 20, 220, 160);
-        addIncome();
-        addSavings();
     }
 
     private void optionsRangeAmount() {
@@ -108,13 +121,15 @@ public class BudgetGUI extends JFrame {
         income.setText("INCOME: " + budget.getIncome());
         income.setOpaque(true);
         income.setVisible(true);
-        infoPanel.add(income);
-        income.setBounds(0, 0, 100, 30);
+        gc.gridx = 0;
+        gc.gridy = 0;
+        infoPanel.add(income, gc);
 
         JButton editButton = new JButton(new EditIncomeAction());
         editButton.setSize(30, 30);
         editButton.setText("Edit");
         editButton.setVisible(true);
+        gc.gridx = 1;
         infoPanel.add(editButton);
     }
 
@@ -122,20 +137,9 @@ public class BudgetGUI extends JFrame {
         savings = new JLabel();
         savings.setText("SAVINGS: " + budget.getSavings());
         savings.setVisible(true);
-        infoPanel.add(savings);
-    }
-
-    private void categoryPanel() {
-
-    }
-
-    private void addAmount() {
-        addAmountPane = new JPanel();
-        JLabel name = new JLabel("NAME: ");
-        addAmountPane.add(name);
-        JTextField nameField = new JTextField("name");
-        desktop.add(addAmountPane);
-        setVisible(true);
+        savings.setVerticalAlignment(0);
+        gc.gridx = 2;
+        infoPanel.add(savings, gc);
     }
 
     private void saveBudget() {
@@ -184,8 +188,52 @@ public class BudgetGUI extends JFrame {
         }
     }
 
-    private class SaveAction extends AbstractAction {
+    private class AmountPane extends JInternalFrame {
 
+        JLabel valText;
+        JLabel nameText;
+        JButton editButton;
+
+        public AmountPane(Amount amount) {
+            super("", false, false, false, false);
+            setLayout(new FlowLayout());
+            nameText = new JLabel("NAME: " + amount.getTitle());
+            valText = new JLabel("VALUE: " + amount.getValString());
+            editButton = new JButton("EDIT");
+            this.add(nameText);
+            this.add(valText);
+            this.add(editButton);
+            reshape(300, 300, 200, 200);
+            gc.gridx = 0;
+            gc.gridy = 2;
+            infoPanel.add(this, gc);
+            setVisible(true);
+        }
+
+        private class EditAction extends AbstractAction {
+            public EditAction() {
+                super("Edit amount");
+
+            }
+        }
+
+    }
+
+    private class AddAmountAction extends AbstractAction {
+
+        public AddAmountAction() {
+            super("Add amount");
+        }
+
+        @Override
+        public void actionPerformed(ActionEvent e) {
+            Amount newAmount = new Amount("", 0);
+            amounts.add(new AmountPane(newAmount));
+            displayUpdate();
+        }
+    }
+
+    private class SaveAction extends AbstractAction {
         public SaveAction() {
             super("Save");
         }
@@ -197,7 +245,6 @@ public class BudgetGUI extends JFrame {
     }
 
     private class LoadAction extends AbstractAction {
-
         public LoadAction() {
             super("Load");
         }
@@ -205,18 +252,6 @@ public class BudgetGUI extends JFrame {
         @Override
         public void actionPerformed(ActionEvent e) {
             loadBudget();
-        }
-    }
-
-    private class AddAmountAction extends AbstractAction {
-
-        public AddAmountAction() {
-            super("Add amount");
-        }
-
-        @Override
-        public void actionPerformed(ActionEvent e) {
-            addAmount();
         }
     }
 }

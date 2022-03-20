@@ -17,6 +17,11 @@ public class Range extends Category implements Writable {
         this.high = high;
     }
 
+    @Override
+    public String getValString() {
+        return low + " - " + high;
+    }
+
     // EFFECTS: returns difference between high and low
     public int getDifference() {
         return high - low;
