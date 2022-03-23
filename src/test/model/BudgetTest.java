@@ -27,7 +27,7 @@ class BudgetTest {
 
     @Test
     public void addIncomeTest() {
-        testBudget.addIncome(100);
+        testBudget.setIncome(100);
         assertEquals(100, testBudget.getIncome());
     }
 
@@ -93,7 +93,7 @@ class BudgetTest {
     @Test
     public void getSavingsTest(){
         testBudget.addAmount(A1);
-        testBudget.addIncome(700);
+        testBudget.setIncome(700);
         assertEquals(700, testBudget.getSavings());
         testBudget.amounts.get(0).setVal(90, 0);
         assertEquals(610, testBudget.getSavings());

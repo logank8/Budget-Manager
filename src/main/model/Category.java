@@ -8,6 +8,8 @@ public abstract class Category implements Writable {
 
     private String title;
 
+    public abstract String getValString();
+
     // EFFECTS: creates category with given title
     public Category(String title) {
         this.title = title;
