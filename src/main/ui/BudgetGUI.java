@@ -82,6 +82,7 @@ public class BudgetGUI extends JFrame {
     private void configureInfoPanel() {
         infoPanel = new JInternalFrame("INFO", false, false,
                 false, false);
+        infoPanel.setBackground(new Color(172, 176, 189));
         infoPanel.setLayout(new FlowLayout());
         desktop.add(infoPanel);
         infoPanel.setVisible(true);
@@ -108,6 +109,7 @@ public class BudgetGUI extends JFrame {
     private void configureCategoryFrame() {
         categoryFrame = new JInternalFrame("test", false, false, false);
         categoryFrame.setLayout(new FlowLayout());
+        categoryFrame.setBackground(new Color(172, 176, 189));
         desktop.add(categoryFrame);
         categoryFrame.reshape(300, 100, 480, 300);
         addMenus();
@@ -125,12 +127,21 @@ public class BudgetGUI extends JFrame {
         fileHandler.add(save);
         fileHandler.add(load);
         menuBar.add(fileHandler);
-        categoryFrame.add(menuBar);
+
         JMenu addCategory = new JMenu("Add...");
         JMenuItem addAmount = new JMenuItem("New amount");
+        addAmount.addActionListener(new AddAmountAction(this));
+        JMenuItem addRange = new JMenuItem("New range");
+        addRange.addActionListener(new AddRangeAction(this));
+        addCategory.add(addAmount);
+        addCategory.add(addRange);
+        menuBar.add(addCategory);
 
+        categoryFrame.add(menuBar);
     }
 
+
+    // fix this
     public void displayUpdate() {
         income.setText("Income: " + budget.getIncome());
         savings.setText("Savings: " + budget.getSavings());
@@ -162,7 +173,6 @@ public class BudgetGUI extends JFrame {
     }
 
     private void makeTable() {
-        budget.addAmount(new Amount("test", 100));
         JTable categoryTable = new JTable(new CategoryTableModel(budget.getCategories()));
         categoryFrame.add(categoryTable);
         categoryTable.setVisible(true);
@@ -231,6 +241,7 @@ public class BudgetGUI extends JFrame {
         public void actionPerformed(ActionEvent e) {
             Amount newAmount = new Amount("[NO NAME]", 0);
             budget.addAmount(newAmount);
+            parent.displayUpdate();
         }
     }
 
@@ -247,6 +258,7 @@ public class BudgetGUI extends JFrame {
         public void actionPerformed(ActionEvent e) {
             Range newRange = new Range("[NO NAME]", 0, 1);
             budget.addRange(newRange);
+            parent.displayUpdate();
         }
     }
 

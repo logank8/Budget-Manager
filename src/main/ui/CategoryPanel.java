@@ -19,12 +19,14 @@ public abstract class CategoryPanel extends JInternalFrame {
         setLayout(new GridLayout(1, 3));
         this.parent = parent;
         this.category = category;
+        setBackground(new Color(172, 176, 189));
         reshape(20, 130, 240, 80);
         setTitle((category.getTitle().equals("")) ? "[NULL]" : category.getTitle());
         valText = new JLabel("Value: " + category.getValString());
         editButton = new JButton("Edit");
         editButton.addActionListener(new EditAction());
         removeButton = new JButton("Remove");
+        removeButton.addActionListener(new RemoveAction());
         add(valText);
         add(editButton);
         add(removeButton);
