@@ -19,7 +19,7 @@ public class BudgetApp {
     private final JsonReader jsonReader;
 
     // EFFECTS: runs budget app
-    public BudgetApp() throws FileNotFoundException {
+    public BudgetApp() {
         jsonWriter = new JsonWriter(JSON_STORE);
         jsonReader = new JsonReader(JSON_STORE);
         runBudget();
@@ -174,7 +174,7 @@ public class BudgetApp {
                 System.out.println("Enter an upper bound for " + range.getTitle());
                 int answer2 = input.nextInt();
                 if (answer2 > answer) {
-                    range.setHigh(answer2);
+                    //range.setHigh(answer2);
                     done = true;
                 } else {
                     System.out.println("Answer not valid.");
@@ -211,7 +211,7 @@ public class BudgetApp {
             System.out.println("Please input new value for " + amount.getTitle());
             int answer = input.nextInt();
             if (answer >= 0) {
-                amount.setAmount(answer);
+                amount.setVal(answer, 0);
             } else {
                 System.out.println("Answer not valid.");
                 editAmount(amount);

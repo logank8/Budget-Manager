@@ -95,7 +95,7 @@ class BudgetTest {
         testBudget.addAmount(A1);
         testBudget.addIncome(700);
         assertEquals(700, testBudget.getSavings());
-        testBudget.amounts.get(0).setAmount(90);
+        testBudget.amounts.get(0).setVal(90, 0);
         assertEquals(610, testBudget.getSavings());
         testBudget.ranges.add(new Range("R1", 0, 1));
         assertEquals(609, testBudget.getSavings());

@@ -1,5 +1,6 @@
 package model;
 
+import model.exceptions.UnevenRangeException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -36,14 +37,22 @@ public class RangeTest {
     @Test
     public void setHighTest() {
         assertEquals(100, testRange.getHigh());
-        testRange.setHigh(500);
+        try {
+            testRange.setHigh(500);
+        } catch (UnevenRangeException e) {
+            fail();
+        }
         assertEquals(500, testRange.getHigh());
     }
 
     @Test
     public void getRangeTest() {
         assertEquals("0 - 100", testRange.getRange());
-        testRange.setHigh(500);
+        try {
+            testRange.setHigh(500);
+        } catch (UnevenRangeException e) {
+            fail();
+        }
         assertEquals("0 - 500", testRange.getRange());
         testRange.setLow(200);
         assertEquals("200 - 500", testRange.getRange());

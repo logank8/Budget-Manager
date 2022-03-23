@@ -14,10 +14,21 @@ public class Amount extends Category {
 
     }
 
+    @Override
+    public String getValString() {
+        return "" + amount;
+    }
+
+    @Override
+    public int type() {
+        return 0;
+    }
+
     // MODIFIES: this
     // EFFECTS: changes amount to given number
-    public void setAmount(int newAmount) {
-        amount = newAmount;
+    @Override
+    public void setVal(int num1, int num2) {
+        amount = num1;
     }
 
     // EFFECTS: returns amount

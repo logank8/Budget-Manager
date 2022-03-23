@@ -23,7 +23,7 @@ public class AmountTest {
     @Test
     public void setAmountTest() {
         assertEquals(0, testAmount.getAmount());
-        testAmount.setAmount(100);
+        testAmount.setVal(100, 0);
         assertEquals(100, testAmount.getAmount());
     }
 }
