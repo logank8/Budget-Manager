@@ -21,6 +21,7 @@ public abstract class CategoryPanel extends JInternalFrame {
         this.category = category;
         setBackground(new Color(172, 176, 189));
         reshape(20, 130, 240, 80);
+
         setTitle((category.getTitle().equals("")) ? "[NULL]" : category.getTitle());
         valText = new JLabel("Value: " + category.getValString());
         editButton = new JButton("Edit");
