@@ -15,8 +15,6 @@ public abstract class Category implements Writable {
         this.title = title;
     }
 
-    public abstract String getValString();
-
     // MODIFIES: this
     // EFFECTS: changes title to given string
     public void setTitle(String newTitle) {

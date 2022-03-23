@@ -17,6 +17,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class BudgetGUI extends JFrame {
+
     private static final int WIDTH = 800;
     private static final int HEIGHT = 600;
     private Budget budget;
@@ -141,27 +142,15 @@ public class BudgetGUI extends JFrame {
     }
 
 
-    // fix this
     public void displayUpdate() {
         income.setText("Income: " + budget.getIncome());
         savings.setText("Savings: " + budget.getSavings());
-        for (CategoryPanel panel : categories) {
-            panel.setVisible(false);
+
+        for (RangePanel rangePanel : ranges) {
+            rangePanel.displayUpdate();
         }
-        categories.clear();
-        ranges.clear();
-        amounts.clear();
-        for (Range range : budget.getRanges()) {
-            RangePanel rangePanel = new RangePanel(this, range);
-            categories.add(rangePanel);
-            ranges.add(rangePanel);
-            desktop.add(rangePanel);
-        }
-        for (Amount amount : budget.getAmounts()) {
-            AmountPanel amountPanel = new AmountPanel(this, amount);
-            categories.add(amountPanel);
-            amounts.add(amountPanel);
-            desktop.add(amountPanel);
+        for (AmountPanel amountPanel : amounts) {
+            amountPanel.displayUpdate();
         }
     }
 
@@ -185,9 +174,9 @@ public class BudgetGUI extends JFrame {
                 "Please input a new name for the category");
         category.setTitle(nameInput);
 
-        String message = (category.type() == 0) ? "lower value" : "value";
         String ansInput =  JOptionPane.showInputDialog(null,
-                "Please input a new" + message + "for the category");
+                "Please input a new" + ((category.type() == 0) ? " lower value " : " value ")
+                        + "for the category");
         try {
             int num1 = Integer.parseInt(ansInput);
             if (category.type() == 0) {
@@ -198,12 +187,12 @@ public class BudgetGUI extends JFrame {
                 int num2 = Integer.parseInt(ansInput2);
                 category.setVal(num1, num2);
             }
+            displayUpdate();
         } catch (NumberFormatException e) {
             JOptionPane.showMessageDialog(null,
                     "ERROR: input must be in the form of an integer");
         } catch (UnevenRangeException e2) {
-            JOptionPane.showMessageDialog(null,
-                    "ERROR: upper value must be higher than lower");
+            JOptionPane.showMessageDialog(null, "ERROR: upper value must be higher than lower");
         }
     }
 
@@ -221,6 +210,18 @@ public class BudgetGUI extends JFrame {
     private void loadBudget() {
         try {
             budget = jsonReader.read();
+            for (Range range : budget.getRanges()) {
+                RangePanel rangePanel = new RangePanel(this, range);
+                categories.add(rangePanel);
+                ranges.add(rangePanel);
+                desktop.add(rangePanel);
+            }
+            for (Amount amount : budget.getAmounts()) {
+                AmountPanel amountPanel = new AmountPanel(this, amount);
+                categories.add(amountPanel);
+                amounts.add(amountPanel);
+                desktop.add(amountPanel);
+            }
             displayUpdate();
             JOptionPane.showMessageDialog(null, "Loaded current budget from " + JSON_STORE);
         } catch (IOException e) {
@@ -241,6 +242,10 @@ public class BudgetGUI extends JFrame {
         public void actionPerformed(ActionEvent e) {
             Amount newAmount = new Amount("[NO NAME]", 0);
             budget.addAmount(newAmount);
+            AmountPanel amountPanel = new AmountPanel(parent, newAmount);
+            categories.add(amountPanel);
+            amounts.add(amountPanel);
+            desktop.add(amountPanel);
             parent.displayUpdate();
         }
     }
@@ -258,6 +263,10 @@ public class BudgetGUI extends JFrame {
         public void actionPerformed(ActionEvent e) {
             Range newRange = new Range("[NO NAME]", 0, 1);
             budget.addRange(newRange);
+            RangePanel rangePanel = new RangePanel(parent, newRange);
+            ranges.add(rangePanel);
+            categories.add(rangePanel);
+            desktop.add(rangePanel);
             parent.displayUpdate();
         }
     }
