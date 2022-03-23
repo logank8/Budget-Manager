@@ -7,6 +7,9 @@ import model.Range;
 import model.exceptions.UnevenRangeException;
 import persistence.JsonReader;
 import persistence.JsonWriter;
+import ui.panels.AmountPanel;
+import ui.panels.CategoryPanel;
+import ui.panels.RangePanel;
 
 import javax.swing.*;
 import java.awt.*;
@@ -16,6 +19,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
+// Desktop display for budget
 public class BudgetGUI extends JFrame {
 
     private static final int WIDTH = 800;
@@ -25,21 +29,24 @@ public class BudgetGUI extends JFrame {
 
     private JLabel income;
     private JLabel savings;
+    private Chart barChart;
+    private JInternalFrame chartFrame;
 
     private final List<CategoryPanel> categories;
     private final List<AmountPanel> amounts;
     private final List<RangePanel> ranges;
 
     private JInternalFrame infoPanel;
-    private JInternalFrame categoryFrame;
 
     private final JsonWriter jsonWriter;
     private final JsonReader jsonReader;
     public static final String JSON_STORE = "./data/budget.json";
 
+    // instantiates budget desktop display
     public BudgetGUI() {
         budget = new Budget();
         desktop = new JDesktopPane();
+        chart();
 
         setContentPane(desktop);
         setTitle("CPSC 210: Budget Manager");
@@ -53,13 +60,24 @@ public class BudgetGUI extends JFrame {
         ranges = new ArrayList<>();
 
         configureInfoPanel();
-        configureCategoryFrame();
         displayUpdate();
 
         setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
         centreOnScreen();
         desktop.setBackground(new Color(11, 57, 72));
         setVisible(true);
+    }
+
+    // MODIFIES: this
+    // EFFECTS: adds chart to desktop
+    private void chart() {
+        chartFrame = new JInternalFrame("", false, false, false);
+        barChart = new Chart(budget.getValues(), budget.getTitles());
+        chartFrame.add(barChart);
+        barChart.setVisible(true);
+        desktop.add(chartFrame);
+        chartFrame.setVisible(true);
+        chartFrame.reshape(400, 200, 300, 300);
     }
 
     public Budget getBudget() {
@@ -87,7 +105,7 @@ public class BudgetGUI extends JFrame {
         infoPanel.setLayout(new FlowLayout());
         desktop.add(infoPanel);
         infoPanel.setVisible(true);
-        infoPanel.reshape(20, 20, 750, 80);
+        infoPanel.reshape(20, 20, 750, 100);
         addIncomeSavings();
     }
 
@@ -100,24 +118,17 @@ public class BudgetGUI extends JFrame {
 
         JButton editButton = new JButton();
         editButton.setText("Edit Income");
+        editButton.addActionListener(new EditIncomeAction(this));
         editButton.setVisible(true);
         infoPanel.add(editButton);
 
         savings = new JLabel("Savings: " + budget.getSavings());
         infoPanel.add(savings);
-    }
-
-    private void configureCategoryFrame() {
-        categoryFrame = new JInternalFrame("test", false, false, false);
-        categoryFrame.setLayout(new FlowLayout());
-        categoryFrame.setBackground(new Color(172, 176, 189));
-        desktop.add(categoryFrame);
-        categoryFrame.reshape(300, 100, 480, 300);
         addMenus();
-        makeTable();
-        categoryFrame.setVisible(true);
     }
 
+    // MODIFIES: this
+    // EFFECTS: adds menu options for save, load, and adding new category
     private void addMenus() {
         JMenuBar menuBar = new JMenuBar();
         JMenu fileHandler = new JMenu("File...");
@@ -138,20 +149,21 @@ public class BudgetGUI extends JFrame {
         addCategory.add(addRange);
         menuBar.add(addCategory);
 
-        categoryFrame.add(menuBar);
+        infoPanel.setJMenuBar(menuBar);
     }
 
-
+    // MODIFIES: this
+    // EFFECTS: updates all values displayed
     public void displayUpdate() {
         income.setText("Income: " + budget.getIncome());
         savings.setText("Savings: " + budget.getSavings());
-
         for (RangePanel rangePanel : ranges) {
             rangePanel.displayUpdate();
         }
         for (AmountPanel amountPanel : amounts) {
             amountPanel.displayUpdate();
         }
+        chartFrame.repaint();
     }
 
     // Helper to centre main application window on desktop
@@ -161,21 +173,15 @@ public class BudgetGUI extends JFrame {
         setLocation((width - getWidth()) / 2, (height - getHeight()) / 2);
     }
 
-    private void makeTable() {
-        JTable categoryTable = new JTable(new CategoryTableModel(budget.getCategories()));
-        categoryFrame.add(categoryTable);
-        categoryTable.setVisible(true);
-        JScrollPane panel = new JScrollPane(categoryTable);
-        categoryFrame.add(panel);
-    }
-
+    // MODIFIES: this
+    // EFFECTS: processes user input to edit name and value of category
     public void edit(Category category) {
         String nameInput = JOptionPane.showInputDialog(null,
                 "Please input a new name for the category");
         category.setTitle(nameInput);
 
         String ansInput =  JOptionPane.showInputDialog(null,
-                "Please input a new" + ((category.type() == 0) ? " lower value " : " value ")
+                "Please input a new" + ((category.type() != 0) ? " lower value " : " value ")
                         + "for the category");
         try {
             int num1 = Integer.parseInt(ansInput);
@@ -196,6 +202,8 @@ public class BudgetGUI extends JFrame {
         }
     }
 
+    // MODIFIES: json file
+    // EFFECTS: saves budget to file
     private void saveBudget() {
         try {
             jsonWriter.open();
@@ -207,21 +215,12 @@ public class BudgetGUI extends JFrame {
         }
     }
 
+    // MODIFIES: this
+    // EFFECTS: loads budget from json update
     private void loadBudget() {
         try {
             budget = jsonReader.read();
-            for (Range range : budget.getRanges()) {
-                RangePanel rangePanel = new RangePanel(this, range);
-                categories.add(rangePanel);
-                ranges.add(rangePanel);
-                desktop.add(rangePanel);
-            }
-            for (Amount amount : budget.getAmounts()) {
-                AmountPanel amountPanel = new AmountPanel(this, amount);
-                categories.add(amountPanel);
-                amounts.add(amountPanel);
-                desktop.add(amountPanel);
-            }
+            loadCategories();
             displayUpdate();
             JOptionPane.showMessageDialog(null, "Loaded current budget from " + JSON_STORE);
         } catch (IOException e) {
@@ -229,15 +228,63 @@ public class BudgetGUI extends JFrame {
         }
     }
 
+    // Helper for loadBudget() - loads categories to display
+    private void loadCategories() {
+        for (CategoryPanel c : categories) {
+            c.setVisible(false);
+        }
+        categories.clear();
+        ranges.clear();
+        amounts.clear();
+        for (Range range : budget.getRanges()) {
+            RangePanel rangePanel = new RangePanel(this, range);
+            categories.add(rangePanel);
+            ranges.add(rangePanel);
+            desktop.add(rangePanel);
+        }
+        for (Amount amount : budget.getAmounts()) {
+            AmountPanel amountPanel = new AmountPanel(this, amount);
+            categories.add(amountPanel);
+            amounts.add(amountPanel);
+            desktop.add(amountPanel);
+        }
+    }
+
+    private class EditIncomeAction extends AbstractAction {
+
+        BudgetGUI parent;
+
+        public EditIncomeAction(BudgetGUI parent) {
+            super("Edit income");
+            this.parent = parent;
+        }
+
+        @Override
+        public void actionPerformed(ActionEvent e) {
+            String input = JOptionPane.showInputDialog("Enter new value for income");
+            try {
+                int newIncome = Integer.parseInt(input);
+                budget.setIncome(newIncome);
+            } catch (NumberFormatException n) {
+                JOptionPane.showMessageDialog(null, "ERROR: value must be an integer");
+            }
+            parent.displayUpdate();
+        }
+    }
+
+    // Abstract action for adding an amount to budget
     private class AddAmountAction extends AbstractAction {
 
         BudgetGUI parent;
 
+        // instantiates AddAmountAction
         public AddAmountAction(BudgetGUI parent) {
             super("Add amount");
             this.parent = parent;
         }
 
+        // MODIFIES: parent
+        // EFFECTS: adds new amount to budget
         @Override
         public void actionPerformed(ActionEvent e) {
             Amount newAmount = new Amount("[NO NAME]", 0);
@@ -250,15 +297,19 @@ public class BudgetGUI extends JFrame {
         }
     }
 
+    // Abstract action for adding range to budget
     private class AddRangeAction extends AbstractAction {
 
         BudgetGUI parent;
 
+        // instantiates AddRangeAction
         public AddRangeAction(BudgetGUI parent) {
             super("Add range");
             this.parent = parent;
         }
 
+        // MODIFIES: parent
+        // EFFECTS: adds new range to budget
         @Override
         public void actionPerformed(ActionEvent e) {
             Range newRange = new Range("[NO NAME]", 0, 1);
@@ -271,22 +322,30 @@ public class BudgetGUI extends JFrame {
         }
     }
 
+    // Abstract action for saving budget
     private class SaveAction extends AbstractAction {
+
+        // instantiates SaveAction
         public SaveAction() {
             super("Save");
         }
 
+        // EFFECTS: saves budget
         @Override
         public void actionPerformed(ActionEvent e) {
             saveBudget();
         }
     }
 
+    // Abstract action for loading budget
     private class LoadAction extends AbstractAction {
+
+        // instantiates LoadAction
         public LoadAction() {
             super("Load");
         }
 
+        // EFFECTS: loads budget
         @Override
         public void actionPerformed(ActionEvent e) {
             loadBudget();

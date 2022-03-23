@@ -14,11 +14,13 @@ public class Amount extends Category {
 
     }
 
+    // EFFECTS: returns amount value as string
     @Override
     public String getValString() {
         return "" + amount;
     }
 
+    // EFFECTS: returns type = 0 to denote that it is amount
     @Override
     public int type() {
         return 0;
@@ -32,7 +34,8 @@ public class Amount extends Category {
     }
 
     // EFFECTS: returns amount
-    public int getAmount() {
+    @Override
+    public int getVal() {
         return amount;
     }
 

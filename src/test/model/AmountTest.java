@@ -17,13 +17,13 @@ public class AmountTest {
     @Test
     public void constructorTest() {
         assertEquals("Title", testAmount.getTitle());
-        assertEquals(0, testAmount.getAmount());
+        assertEquals(0, testAmount.getVal());
     }
 
     @Test
     public void setAmountTest() {
-        assertEquals(0, testAmount.getAmount());
+        assertEquals(0, testAmount.getVal());
         testAmount.setVal(100, 0);
-        assertEquals(100, testAmount.getAmount());
+        assertEquals(100, testAmount.getVal());
     }
 }

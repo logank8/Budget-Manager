@@ -10,6 +10,10 @@ public abstract class Category implements Writable {
 
     public abstract String getValString();
 
+    public abstract int getVal();
+
+    public abstract int type();
+
     // EFFECTS: creates category with given title
     public Category(String title) {
         this.title = title;
@@ -27,6 +31,4 @@ public abstract class Category implements Writable {
     public String getTitle() {
         return title;
     }
-
-    public abstract int type();
 }

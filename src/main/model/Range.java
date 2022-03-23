@@ -38,19 +38,29 @@ public class Range extends Category implements Writable {
         high = newHigh;
     }
 
+    // EFFECTS: returns string that can be printed out showing range values
     public String getValString() {
         return (low + " - " + high);
     }
 
+    // EFFECTS: returns type = 1 to denote it is range
     @Override
     public int type() {
         return 1;
     }
 
+    // MODIFIES: this
+    // EFFECTS: sets low and high new numbers
     @Override
     public void setVal(int num1, int num2) throws UnevenRangeException {
         setLow(num1);
         setHigh(num2);
+    }
+
+    // EFFECTS: returns higher value of
+    @Override
+    public int getVal() {
+        return high;
     }
 
     // EFFECTS: returns string of lower and upper bounds
