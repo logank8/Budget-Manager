@@ -3,17 +3,23 @@ package ui;
 import model.Amount;
 import model.Budget;
 import model.Category;
+import model.Range;
 import model.exceptions.UnevenRangeException;
+import persistence.JsonReader;
+import persistence.JsonWriter;
 
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
 public class BudgetGUI extends JFrame {
     private static final int WIDTH = 800;
     private static final int HEIGHT = 600;
-    private final Budget budget;
+    private Budget budget;
     private final JDesktopPane desktop;
 
     private JLabel income;
@@ -26,6 +32,10 @@ public class BudgetGUI extends JFrame {
     private JInternalFrame infoPanel;
     private JInternalFrame categoryFrame;
 
+    private final JsonWriter jsonWriter;
+    private final JsonReader jsonReader;
+    public static final String JSON_STORE = "./data/budget.json";
+
     public BudgetGUI() {
         budget = new Budget();
         desktop = new JDesktopPane();
@@ -34,17 +44,21 @@ public class BudgetGUI extends JFrame {
         setTitle("CPSC 210: Budget Manager");
         setSize(WIDTH, HEIGHT);
 
+        jsonWriter = new JsonWriter(JSON_STORE);
+        jsonReader = new JsonReader(JSON_STORE);
+
         categories = new ArrayList<>();
         amounts = new ArrayList<>();
         ranges = new ArrayList<>();
 
         configureInfoPanel();
+        configureCategoryFrame();
+        displayUpdate();
 
         setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
         centreOnScreen();
         desktop.setBackground(new Color(11, 57, 72));
         setVisible(true);
-        configureCategoryFrame();
     }
 
     public Budget getBudget() {
@@ -62,7 +76,6 @@ public class BudgetGUI extends JFrame {
     public List<AmountPanel> getAmounts() {
         return amounts;
     }
-
 
     // MODIFIES: this
     // EFFECTS: Adds info panel to desktop
@@ -97,14 +110,48 @@ public class BudgetGUI extends JFrame {
         categoryFrame.setLayout(new FlowLayout());
         desktop.add(categoryFrame);
         categoryFrame.reshape(300, 100, 480, 300);
-        // add menu bar
+        addMenus();
         makeTable();
         categoryFrame.setVisible(true);
+    }
+
+    private void addMenus() {
+        JMenuBar menuBar = new JMenuBar();
+        JMenu fileHandler = new JMenu("File...");
+        JMenuItem save = new JMenuItem("Save budget");
+        save.addActionListener(new SaveAction());
+        JMenuItem load = new JMenuItem("Load budget");
+        load.addActionListener(new LoadAction());
+        fileHandler.add(save);
+        fileHandler.add(load);
+        menuBar.add(fileHandler);
+        categoryFrame.add(menuBar);
+        JMenu addCategory = new JMenu("Add...");
+        JMenuItem addAmount = new JMenuItem("New amount");
+
     }
 
     public void displayUpdate() {
         income.setText("Income: " + budget.getIncome());
         savings.setText("Savings: " + budget.getSavings());
+        for (CategoryPanel panel : categories) {
+            panel.setVisible(false);
+        }
+        categories.clear();
+        ranges.clear();
+        amounts.clear();
+        for (Range range : budget.getRanges()) {
+            RangePanel rangePanel = new RangePanel(this, range);
+            categories.add(rangePanel);
+            ranges.add(rangePanel);
+            desktop.add(rangePanel);
+        }
+        for (Amount amount : budget.getAmounts()) {
+            AmountPanel amountPanel = new AmountPanel(this, amount);
+            categories.add(amountPanel);
+            amounts.add(amountPanel);
+            desktop.add(amountPanel);
+        }
     }
 
     // Helper to centre main application window on desktop
@@ -147,6 +194,81 @@ public class BudgetGUI extends JFrame {
         } catch (UnevenRangeException e2) {
             JOptionPane.showMessageDialog(null,
                     "ERROR: upper value must be higher than lower");
+        }
+    }
+
+    private void saveBudget() {
+        try {
+            jsonWriter.open();
+            jsonWriter.write(budget);
+            jsonWriter.close();
+            JOptionPane.showMessageDialog(null, "Saved current budget to " + JSON_STORE);
+        } catch (FileNotFoundException e) {
+            JOptionPane.showMessageDialog(null, "Unable to write to file " + JSON_STORE);
+        }
+    }
+
+    private void loadBudget() {
+        try {
+            budget = jsonReader.read();
+            displayUpdate();
+            JOptionPane.showMessageDialog(null, "Loaded current budget from " + JSON_STORE);
+        } catch (IOException e) {
+            JOptionPane.showMessageDialog(null, "Unable to read from file " + JSON_STORE);
+        }
+    }
+
+    private class AddAmountAction extends AbstractAction {
+
+        BudgetGUI parent;
+
+        public AddAmountAction(BudgetGUI parent) {
+            super("Add amount");
+            this.parent = parent;
+        }
+
+        @Override
+        public void actionPerformed(ActionEvent e) {
+            Amount newAmount = new Amount("[NO NAME]", 0);
+            budget.addAmount(newAmount);
+        }
+    }
+
+    private class AddRangeAction extends AbstractAction {
+
+        BudgetGUI parent;
+
+        public AddRangeAction(BudgetGUI parent) {
+            super("Add range");
+            this.parent = parent;
+        }
+
+        @Override
+        public void actionPerformed(ActionEvent e) {
+            Range newRange = new Range("[NO NAME]", 0, 1);
+            budget.addRange(newRange);
+        }
+    }
+
+    private class SaveAction extends AbstractAction {
+        public SaveAction() {
+            super("Save");
+        }
+
+        @Override
+        public void actionPerformed(ActionEvent e) {
+            saveBudget();
+        }
+    }
+
+    private class LoadAction extends AbstractAction {
+        public LoadAction() {
+            super("Load");
+        }
+
+        @Override
+        public void actionPerformed(ActionEvent e) {
+            loadBudget();
         }
     }
 }

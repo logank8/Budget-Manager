@@ -1,12 +1,10 @@
 package ui;
 
-import model.Budget;
 import model.Category;
 
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
-import java.util.List;
 
 public abstract class CategoryPanel extends JInternalFrame {
 
@@ -21,13 +19,16 @@ public abstract class CategoryPanel extends JInternalFrame {
         setLayout(new GridLayout(1, 3));
         this.parent = parent;
         this.category = category;
-        reshape(20, 130, 200, 60);
+        reshape(20, 130, 240, 80);
         setTitle((category.getTitle().equals("")) ? "[NULL]" : category.getTitle());
         valText = new JLabel("Value: " + category.getValString());
         editButton = new JButton("Edit");
         editButton.addActionListener(new EditAction());
         removeButton = new JButton("Remove");
-
+        add(valText);
+        add(editButton);
+        add(removeButton);
+        setVisible(true);
     }
 
     public abstract void remove();

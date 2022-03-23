@@ -14,6 +14,9 @@ public class AmountPanel extends CategoryPanel {
     }
 
     public void remove() {
-
+        parent.getBudget().removeCategory(amount);
+        parent.getBudget().removeAmount(amount);
+        parent.getCategories().remove(this);
+        parent.getAmounts().remove(this);
     }
 }
