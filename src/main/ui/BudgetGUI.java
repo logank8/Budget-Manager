@@ -29,8 +29,6 @@ public class BudgetGUI extends JFrame {
 
     private JLabel income;
     private JLabel savings;
-    private Chart barChart;
-    private JInternalFrame chartFrame;
 
     private final List<CategoryPanel> categories;
     private final List<AmountPanel> amounts;
@@ -46,8 +44,6 @@ public class BudgetGUI extends JFrame {
     public BudgetGUI() {
         budget = new Budget();
         desktop = new JDesktopPane();
-        chart();
-
         setContentPane(desktop);
         setTitle("CPSC 210: Budget Manager");
         setSize(WIDTH, HEIGHT);
@@ -66,18 +62,6 @@ public class BudgetGUI extends JFrame {
         centreOnScreen();
         desktop.setBackground(new Color(11, 57, 72));
         setVisible(true);
-    }
-
-    // MODIFIES: this
-    // EFFECTS: adds chart to desktop
-    private void chart() {
-        chartFrame = new JInternalFrame("", false, false, false);
-        barChart = new Chart(budget.getValues(), budget.getTitles());
-        chartFrame.add(barChart);
-        barChart.setVisible(true);
-        desktop.add(chartFrame);
-        chartFrame.setVisible(true);
-        chartFrame.reshape(400, 200, 300, 300);
     }
 
     public Budget getBudget() {
@@ -163,7 +147,6 @@ public class BudgetGUI extends JFrame {
         for (AmountPanel amountPanel : amounts) {
             amountPanel.displayUpdate();
         }
-        chartFrame.repaint();
     }
 
     // Helper to centre main application window on desktop

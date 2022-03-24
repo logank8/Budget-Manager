@@ -17,11 +17,11 @@ public abstract class CategoryPanel extends JInternalFrame {
     // Creates new panel containing category info and buttons
     public CategoryPanel(BudgetGUI parent, Category category) {
         super(category.getTitle());
-        setLayout(new GridLayout(1, 3));
+        setLayout(new FlowLayout());
         this.parent = parent;
         this.category = category;
         setBackground(new Color(172, 176, 189));
-        reshape(20, 50 + (80 * (parent.getBudget().getCategories().size())), 280, 80);
+        reshape(20, 50 + (80 * (parent.getBudget().getCategories().size())), 400, 80);
 
         setTitle((category.getTitle().equals("")) ? "[NULL]" : category.getTitle());
         valText = new JLabel("Value: " + category.getValString());
@@ -32,7 +32,15 @@ public abstract class CategoryPanel extends JInternalFrame {
         add(valText);
         add(editButton);
         add(removeButton);
+        addIcon();
         setVisible(true);
+    }
+
+    private void addIcon() {
+        JLabel label = new JLabel("         ");
+        Icon icon = new ImageIcon("./data/fullheart.png");
+        label.setIcon(icon);
+        add(label);
     }
 
     public abstract void remove();
