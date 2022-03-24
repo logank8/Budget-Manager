@@ -13,6 +13,7 @@ public abstract class CategoryPanel extends JInternalFrame {
     private final BudgetGUI parent;
     private final Category category;
     private final JLabel valText;
+    private final int coordinate;
 
     // Creates new panel containing category info and buttons
     public CategoryPanel(BudgetGUI parent, Category category) {
@@ -21,7 +22,9 @@ public abstract class CategoryPanel extends JInternalFrame {
         this.parent = parent;
         this.category = category;
         setBackground(new Color(172, 176, 189));
-        reshape(20, 50 + (80 * (parent.getBudget().getCategories().size())), 400, 80);
+        int width = 350 + (5 * category.getValString().length());
+        coordinate = 50 + (80 * (parent.getBudget().getCategories().size()));
+        reshape(200, coordinate, width, 80);
 
         setTitle((category.getTitle().equals("")) ? "[NULL]" : category.getTitle());
         valText = new JLabel("Value: " + category.getValString());
@@ -50,6 +53,8 @@ public abstract class CategoryPanel extends JInternalFrame {
     public void displayUpdate() {
         setTitle((category.getTitle().equals("")) ? "[NULL]" : category.getTitle());
         valText.setText("Value: " + category.getValString());
+        int width = 350 + (5 * category.getValString().length());
+        reshape(200, coordinate, width, 80);
     }
 
     // Abstract action to edit category
