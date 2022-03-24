@@ -4,7 +4,6 @@ import org.json.JSONArray;
 import org.json.JSONObject;
 import persistence.Writable;
 
-import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -95,24 +94,6 @@ public class Budget implements Writable {
     // EFFECTS: returns income
     public int getIncome() {
         return income;
-    }
-
-    // EFFECTS: gives list of all values of each category to be used in UI
-    public List<Integer> getValues() {
-        List<Integer> values = new ArrayList<>();
-        for (Category c : categories) {
-            values.add(c.getVal());
-        }
-        return values;
-    }
-
-    // EFFECTS: returns list of all titles of categories in budget
-    public List<String> getTitles() {
-        List<String> names = new ArrayList<>();
-        for (Category c : categories) {
-            names.add(c.getTitle());
-        }
-        return names;
     }
 
     // EFFECTS: returns ranges list

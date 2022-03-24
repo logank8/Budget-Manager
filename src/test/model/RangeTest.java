@@ -20,6 +20,8 @@ public class RangeTest {
         assertEquals("Title", testRange.getTitle());
         assertEquals(0, testRange.getLow());
         assertEquals(100, testRange.getHigh());
+        assertEquals(1, testRange.type());
+        assertEquals(100, testRange.getVal());
     }
 
     @Test
@@ -43,6 +45,14 @@ public class RangeTest {
             fail();
         }
         assertEquals(500, testRange.getHigh());
+        testRange.setLow(400);
+        try {
+            testRange.setHigh(100);
+            fail();
+        } catch (UnevenRangeException e2) {
+            assertEquals(400, testRange.getLow());
+            assertEquals(500, testRange.getHigh());
+        }
     }
 
     @Test
@@ -56,5 +66,16 @@ public class RangeTest {
         assertEquals("0 - 500", testRange.getRange());
         testRange.setLow(200);
         assertEquals("200 - 500", testRange.getRange());
+    }
+
+    @Test
+    public void valStringTest() {
+        assertEquals("0 - 100", testRange.getValString());
+        try {
+            testRange.setVal(300, 400);
+            assertEquals("300 - 400", testRange.getValString());
+        } catch (UnevenRangeException e) {
+            fail();
+        }
     }
 }
