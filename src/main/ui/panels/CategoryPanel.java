@@ -39,6 +39,8 @@ public abstract class CategoryPanel extends JInternalFrame {
         setVisible(true);
     }
 
+    // MODIFIES: this
+    // EFFECTS: adds icon to panel <3
     private void addIcon() {
         JLabel label = new JLabel("         ");
         Icon icon = new ImageIcon("./data/fullheart.png");

@@ -233,15 +233,19 @@ public class BudgetGUI extends JFrame {
         }
     }
 
+    // Abstract action for editing income
     private class EditIncomeAction extends AbstractAction {
 
         BudgetGUI parent;
 
+        // instantiates EditIncome action
         public EditIncomeAction(BudgetGUI parent) {
             super("Edit income");
             this.parent = parent;
         }
 
+        // MODIFIES: parent
+        // EFFECTS: sets income to user input
         @Override
         public void actionPerformed(ActionEvent e) {
             String input = JOptionPane.showInputDialog("Enter new value for income");
