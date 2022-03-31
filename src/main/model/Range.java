@@ -3,10 +3,9 @@ package model;
 
 import model.exceptions.UnevenRangeException;
 import org.json.JSONObject;
-import persistence.Writable;
 
 // Represents a category with a range rather than a definite amount
-public class Range extends Category implements Writable {
+public class Range extends Category {
     private int low;
     private int high;
 

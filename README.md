@@ -18,3 +18,20 @@ This application can:
 - As a user, I want to be able to remove categories from my budget.
 - As a user, I want to be able to save a budget to file
 - As a user, I want to be able to choose to load a budget from file
+
+### Event Printer Example:
+Sun Mar 27 22:46:53 PDT 2022
+
+Range added
+
+Sun Mar 27 22:46:54 PDT 2022
+
+Amount added
+
+Sun Mar 27 22:47:01 PDT 2022
+
+Amount removed
+
+Sun Mar 27 22:47:03 PDT 2022
+
+Range removed

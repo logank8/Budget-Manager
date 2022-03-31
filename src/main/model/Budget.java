@@ -15,6 +15,7 @@ public class Budget implements Writable {
     List<Category> categories;
     List<Range> ranges;
     List<Amount> amounts;
+    EventLog log;
 
 
     // EFFECTS: creates a new Budget with no categories and income set at 0
@@ -23,6 +24,12 @@ public class Budget implements Writable {
         categories = new LinkedList<>();
         ranges = new LinkedList<>();
         amounts = new LinkedList<>();
+        log = EventLog.getInstance();
+    }
+
+    // EFFECTS: returns event log
+    public EventLog getLog() {
+        return log;
     }
 
     // REQUIRES: amount > 0
@@ -37,6 +44,7 @@ public class Budget implements Writable {
     public void addRange(Range range) {
         ranges.add(range);
         categories.add(range);
+        log.logEvent(new Event("Range added "));
     }
 
     // MODIFIES: this
@@ -44,6 +52,7 @@ public class Budget implements Writable {
     public void addAmount(Amount newAmount) {
         amounts.add(newAmount);
         categories.add(newAmount);
+        log.logEvent(new Event("Amount added "));
     }
 
     // EFFECTS: returns cost of every category in categories list
@@ -72,6 +81,7 @@ public class Budget implements Writable {
     // EFFECTS: removes selected range from ranges list
     public void removeRange(Range range) {
         ranges.remove(range);
+        log.logEvent(new Event("Range removed"));
     }
 
     // REQUIRES: amount in amounts list
@@ -79,6 +89,7 @@ public class Budget implements Writable {
     // EFFECTS: removes selected amount from amounts list
     public void removeAmount(Amount amount) {
         amounts.remove(amount);
+        log.logEvent(new Event("Amount removed"));
     }
 
     // EFFECTS: returns the difference between income and total cost

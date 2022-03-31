@@ -19,9 +19,11 @@ public class AmountPanel extends CategoryPanel {
     // MODIFIES: parent
     // EFFECTS: removes category from budget
     public void remove() {
+        setVisible(false);
         parent.getBudget().removeCategory(amount);
         parent.getBudget().removeAmount(amount);
         parent.getCategories().remove(this);
         parent.getAmounts().remove(this);
+        parent.displayUpdate();
     }
 }

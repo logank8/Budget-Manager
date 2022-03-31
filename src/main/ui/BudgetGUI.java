@@ -1,9 +1,7 @@
 package ui;
 
-import model.Amount;
-import model.Budget;
-import model.Category;
-import model.Range;
+import model.*;
+import model.Event;
 import model.exceptions.UnevenRangeException;
 import persistence.JsonReader;
 import persistence.JsonWriter;
@@ -14,6 +12,8 @@ import ui.panels.RangePanel;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -54,11 +54,10 @@ public class BudgetGUI extends JFrame {
         categories = new ArrayList<>();
         amounts = new ArrayList<>();
         ranges = new ArrayList<>();
-
         configureInfoPanel();
         displayUpdate();
 
-        setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
+        setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
         centreOnScreen();
         desktop.setBackground(new Color(11, 57, 72));
         setVisible(true);
@@ -337,5 +336,15 @@ public class BudgetGUI extends JFrame {
         public void actionPerformed(ActionEvent e) {
             loadBudget();
         }
+    }
+
+    @Override
+    public void dispose() {
+        if (budget.getLog() != null) {
+            for (Event next : budget.getLog()) {
+                System.out.println(next.toString());
+            }
+        }
+        super.dispose();
     }
 }

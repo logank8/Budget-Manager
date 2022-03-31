@@ -24,6 +24,7 @@ public class RangePanel extends CategoryPanel {
         parent.getBudget().removeRange(range);
         parent.getCategories().remove(this);
         parent.getRanges().remove(this);
+        setVisible(false);
         parent.displayUpdate();
     }
 }
