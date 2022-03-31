@@ -19,7 +19,7 @@ This application can:
 - As a user, I want to be able to save a budget to file
 - As a user, I want to be able to choose to load a budget from file
 
-### Event Printer Example:
+### Phase 4: Task 2
 Sun Mar 27 22:46:53 PDT 2022
 
 Range added
@@ -35,3 +35,8 @@ Amount removed
 Sun Mar 27 22:47:03 PDT 2022
 
 Range removed
+
+### Phase 4: Task 3
+
+For refactoring I wish I could have found a way to merge the categories subtypes and their panels.
+I also should have anticipated complications with my subtypes a bit more, because then it would have made coding the rest a little easier.
