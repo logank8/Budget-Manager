@@ -338,6 +338,7 @@ public class BudgetGUI extends JFrame {
         }
     }
 
+    // EFFECTS: prints out event log at closing
     @Override
     public void dispose() {
         if (budget.getLog() != null) {
